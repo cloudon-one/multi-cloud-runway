@@ -1,0 +1,219 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ProtectStackSets",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:cloudformation:*:*:stackset/AWSControlTower:*",
+                "arn:aws:cloudformation:*:*:stack/StackSet-AWSControlTower-*/*"
+            ],
+            "Action": [
+                "cloudformation:SetStackPolicy",
+                "cloudformation:Delete*",
+                "cloudformation:Create*",
+                "cloudformation:Cancel*",
+                "cloudformation:Update*",
+                "cloudformation:SignalResource",
+                "cloudformation:ContinueUpdateRollback",
+                "cloudformation:StopStackSetOperation",
+                "cloudformation:ExecuteChangeSet"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ProtectLogGroup",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:logs:*:*:log-group:aws-controltower*"
+            ],
+            "Action": [
+                "logs:Create*",
+                "logs:Delete*",
+                "logs:Put*"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ProtectCWalarms",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:cloudwatch:*:*:alarm:aws-controltower*"
+            ],
+            "Action": [
+                "cloudwatch:Create*",
+                "cloudwatch:Delete*",
+                "cloudwatch:Put*"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ProtectLambdas",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:lambda:*:*:function:aws-controltower-*"
+            ],
+            "Action": [
+                "lambda:AddPermission",
+                "lambda:Create*",
+                "lambda:Delete*",
+                "lambda:Put*",
+                "lambda:Remove*",
+                "lambda:Update*"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ProtectEvents",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:events:*:*:rule/aws-controltower-*"
+            ],
+            "Action": [
+                "events:Put*",
+                "events:RemoveTargets",
+                "events:DisableRule",
+                "events:DeleteRule"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "DenyIamRolePolicyModification",
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:iam::*:role/aws-*",
+                "arn:aws:iam::*:policy/aws-*",
+                "arn:aws:iam::*:role/AllCloud_Billing_Cloudhealth",
+                "arn:aws:iam::*:policy/AllCloud_Billing_Cloudhealth"
+            ],
+            "Action": [
+                "iam:AttachRolePolicy",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:DeleteRolePermissionsBoundary",
+                "iam:DeleteRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:PutRolePermissionsBoundary",
+                "iam:PutRolePolicy",
+                "iam:UpdateAssumeRolePolicy",
+                "iam:UpdateRole",
+                "iam:UpdateRoleDescription",
+                "iam:DeletePolicy",
+                "iam:CreatePolicy",
+                "iam:CreatePolicyVersion",
+                "iam:AddRoleToInstanceProfile",
+                "iam:PassRole",
+                "iam:RemoveRoleFromInstanceProfile"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ServiceGuardrails",
+            "Effect": "Deny",
+            "Resource": "*",
+            "Action": [
+                "s3:PutAccountPublicAccessBlock",
+                "macie2:Disassociate*",
+                "macie2:Create*",
+                "macie2:Disable*",
+                "macie2:Enable*",
+                "macie2:Update*",
+                "macie2:PutClassificationExportConfiguration",
+                "macie2:Delete*",
+                "macie2:Decline*",
+                "guardduty:StartMonitoringMembers",
+                "guardduty:StopMonitoringMembers",
+                "guardduty:DisassociateMembers",
+                "guardduty:DeleteDetector",
+                "guardduty:UpdateDetector",
+                "guardduty:CreateMembers",
+                "guardduty:DeleteMembers",
+                "guardduty:CreateDetector",
+                "securityhub:EnableSecurityHub",
+                "securityhub:DeclineInvitations",
+                "securityhub:CreateMembers",
+                "securityhub:DisassociateMembers",
+                "securityhub:InviteMembers",
+                "securityhub:DeleteInvitations",
+                "securityhub:AcceptInvitation",
+                "securityhub:DisassociateFromMasterAccount",
+                "securityhub:DeleteMembers",
+                "securityhub:DisableSecurityHub",
+                "access-analyzer:CreateAnalyzer",
+                "access-analyzer:DeleteAnalyzer",
+                "ec2:DisableEbsEncryptionByDefault"
+            ],
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/AWSControlTowerExecution",
+                        "arn:aws:iam::*:role/aws-controltower-*",
+                        "arn:aws:iam::*:role/SC-*",
+                        "arn:aws:iam::*:role/cdk-*",
+                        "arn:aws:iam::*:role/network-portfolio-SharedSubnetsTagsSyncServiceRole-*"
+                    ]
+                }
+            }
+        }
+    ]
+}

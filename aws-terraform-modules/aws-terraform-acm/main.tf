@@ -1,0 +1,24 @@
+module "acm" {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "5.1.0"
+  acm_certificate_domain_validation_options = var.acm_certificate_domain_validation_options
+  certificate_transparency_logging_preference = var.certificate_transparency_logging_preference
+  create_certificate = var.create_certificate
+  create_route53_records = var.create_route53_records
+  create_route53_records_only  = var.create_route53_records_only
+  distinct_domain_names = var.distinct_domain_names
+  dns_ttl  = var.dns_ttl
+  domain_name = var.domain_name
+  key_algorithm = var.key_algorithm
+  subject_alternative_names = var.subject_alternative_names
+  tags  = var.tags
+  validate_certificate = var.validate_certificate
+  validation_allow_overwrite_records = var.validation_allow_overwrite_records
+  validation_method = var.validation_method
+  validation_option  = var.validation_option
+  validation_record_fqdns = var.validation_record_fqdns
+  validation_timeout  = var.validation_timeout
+  wait_for_validation = var.wait_for_validation
+  zone_id = var.zone_id
+  zones = var.zones
+}

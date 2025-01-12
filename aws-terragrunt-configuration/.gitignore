@@ -1,0 +1,74 @@
+# Terragrunt-specific
+.terragrunt-cache
+.terraform.lock.hcl
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore any .tfplan files
+*.tfplan
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore environment-specific variables files
+*.auto.tfvars
+
+# Ignore log files
+*.log
+
+# Ignore sensitive files
+*.pem
+*.key
+*.pub
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore any local .env files
+.env
+
+# Ignore any generated plan files
+plan.out
+plan.out.json
+
+# Ignore any backup files
+*.bak
+
+# Ignore any temporary files
+*.tmp
+aws/vpc/us/dev/.terragrunt-cache/lOgC0SrOTaGq9nsmP-dL7UntjBY/FXTjdyUwcyTaKhxY0bL69OG9v0A
+aws/vpc/us/dev/.terragrunt-cache/lOgC0SrOTaGq9nsmP-dL7UntjBY/FXTjdyUwcyTaKhxY0bL69OG9v0A
+aws/vpc/us/dev/.terraform.lock.hcl
+aws/vpc/us/dev/.terragrunt-cache/lOgC0SrOTaGq9nsmP-dL7UntjBY/FXTjdyUwcyTaKhxY0bL69OG9v0A
+aws/vpc/us/dev/.terraform.lock.hcl

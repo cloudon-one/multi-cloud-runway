@@ -1,0 +1,32 @@
+# Default owners for everything in the repo.
+# Unless a later match takes precedence, these owners 
+# will be requested for review when someone opens a pull request.
+*       @platform-leads
+
+# Infrastructure and Network
+/aws/network/       @infrastructure-team
+/aws/vpc/           @infrastructure-team
+/aws/vpn/           @infrastructure-team
+/aws/ec2/           @infrastructure-team
+/aws/eks/           @infrastructure-team
+
+# Security and Access Management
+/aws/iam/           @security-platform-team
+/aws/security/      @security-platform-team
+/aws/cloudtrail/    @security-platform-team
+/aws/acm/           @security-platform-team
+
+# Data and Application Services
+/aws/aurora/        @platform-services-team
+/aws/rds/           @platform-services-team
+/aws/dynamodb/      @platform-services-team
+/aws/redis/         @platform-services-team
+/aws/s3/            @platform-services-team
+/aws/api-gw/        @platform-services-team
+/aws/sns/           @platform-services-team
+
+# Automation and Core Configuration
+/automations/       @infrastructure-team
+/aws/terragrunt.hcl @platform-leads
+/aws/common.hcl     @platform-leads
+/aws/vars.yaml      @platform-leads
