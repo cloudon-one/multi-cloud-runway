@@ -1,0 +1,234 @@
+name: terragrunt-plan-and-apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Select desired environment for Terragrunt execution
+        options: [dev, qa, prod]
+        required: true
+        default: dev
+      account:
+        type: choice
+        description: Select desired AWS account
+        options: [dev, prod, devops]
+        required: true
+        default: dev
+      region:
+        type: choice
+        description: Select AWS region
+        options: [eu-west-1, eu-west-2, us-east-1, us-east-2]
+        required: true 
+        default: us-east-2
+
+  schedule:
+    - cron: '0 8 * * 1-5'
+  
+  push:
+    branches: [main]
+    paths:
+      - '**/*.hcl'
+      - '**/*.tf'
+      - '.github/workflows/**'
+  
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.hcl'
+      - '**/*.tf'
+      - '.github/workflows/**'
+
+env:
+  TERRAFORM_VERSION: 1.5.4
+  TERRAGRUNT_VERSION: 0.70.1
+  TFSEC_VERSION: "v1.28.1"
+  TFLINT_VERSION: "latest"
+  INFRACOST_VERSION: "latest"
+  AWS_REGION: ${{ github.event.inputs.region || 'us-east-2' }}
+  ENVIRONMENT: ${{ github.event.inputs.env || 'dev' }}
+  TERRAFORM_STATE_BUCKET: ${{ vars.TERRAFORM_STATE_BUCKET }}
+  CACHE_KEY_PREFIX: terragrunt-${{ github.sha }}
+
+permissions:
+  id-token: write
+  issues: write
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.env || 'dev' }}
+  cancel-in-progress: true
+
+jobs:
+  pre-checks:
+    name: "Pre-deployment Checks"
+    runs-on: ubuntu-latest
+    outputs:
+      terraform_dirs: ${{ steps.find-dirs.outputs.terraform_dirs }}
+      changes_detected: ${{ steps.changes.outputs.changes_detected }}
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Changes
+        id: changes
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD^...HEAD)
+          fi
+          
+          echo "$CHANGED_FILES" | grep -E '\.tf$|\.hcl$' > /dev/null
+          echo "changes_detected=$?" >> $GITHUB_OUTPUT
+
+      - name: Find Terragrunt Configurations
+        id: find-dirs
+        run: |
+          DIRS=$(find . -name "terragrunt.hcl" -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          echo "terraform_dirs=$DIRS" >> $GITHUB_OUTPUT
+
+  setup-tools:
+    name: "Setup Infrastructure Tools"
+    needs: pre-checks
+    if: needs.pre-checks.outputs.changes_detected == '0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Setup Infrastructure Tools
+        uses: actions/cache@v3
+        id: tools-cache
+        with:
+          path: |
+            /usr/local/bin/terragrunt
+            /usr/local/bin/tflint
+            ~/.tflint.d
+          key: ${{ runner.os }}-tools-${{ env.TERRAGRUNT_VERSION }}-${{ env.TFLINT_VERSION }}
+      
+      - name: Install Tools if Not Cached
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          wget -q -O /usr/local/bin/terragrunt \
+            "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64"
+          chmod +x /usr/local/bin/terragrunt
+          
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+  parallel-operations:
+    name: "Parallel Infrastructure Operations"
+    needs: [pre-checks, setup-tools]
+    if: needs.pre-checks.outputs.changes_detected == '0'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: ${{ fromJson(needs.pre-checks.outputs.terraform_dirs) }}
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - uses: actions/cache@v3
+        with:
+          path: ${{ matrix.dir }}/.terragrunt-cache
+          key: ${{ env.CACHE_KEY_PREFIX }}-${{ matrix.dir }}-${{ hashFiles(format('{0}/**/*.hcl', matrix.dir)) }}
+      
+      - name: Terragrunt Init and Plan
+        id: plan
+        run: |
+          cd ${{ matrix.dir }}
+          terragrunt init -no-color
+          terragrunt plan -no-color -out=tfplan
+          
+      - name: Run Security Checks
+        run: |
+          cd ${{ matrix.dir }}
+          tfsec . --no-color --format json > tfsec.json
+          checkov -d . --output json > checkov.json
+        continue-on-error: true
+
+      - name: Upload Plan Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.dir }}-plan
+          path: |
+            ${{ matrix.dir }}/tfplan
+            ${{ matrix.dir }}/*.json
+          retention-days: 5
+
+  approval-and-apply:
+    name: "Approve and Apply Changes"
+    needs: parallel-operations
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.env || 'dev' }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Apply Changes
+        run: |
+          for plan in artifacts/**/tfplan; do
+            dir=$(dirname "$plan")
+            cd "$dir"
+            terragrunt apply -auto-approve tfplan
+            cd -
+          done
+
+      - name: Backup State
+        run: |
+          timestamp=$(date +%Y%m%d_%H%M%S)
+          backup_bucket="${TERRAFORM_STATE_BUCKET}-backup"
+          
+          aws s3 sync \
+            "s3://${TERRAFORM_STATE_BUCKET}" \
+            "s3://${backup_bucket}/backup_${timestamp}" \
+            --exclude "*" \
+            --include "*/terraform.tfstate"
+
+  notifications:
+    name: "Send Notifications"
+    needs: [parallel-operations, approval-and-apply]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Prepare Notification
+        id: notify
+        run: |
+          if [[ "${{ needs.approval-and-apply.result }}" == "success" ]]; then
+            echo "status=✅ Deployment Successful" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ Deployment Failed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "${{ steps.notify.outputs.status }} in ${{ env.ENVIRONMENT }}\nDetails: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
