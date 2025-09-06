@@ -1,0 +1,143 @@
+repos:
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^.*\.md$
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-yaml
+        args: ['--allow-multiple-documents']
+      - id: pretty-format-json
+        args: ['--autofix', '--no-sort-keys']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Terraform hooks
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.86.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+      - id: terraform_validate
+        exclude: ^(aws-terragrunt-configuration|gcp-terragrunt-configuration)/
+      - id: terraform_docs
+        args:
+          - --hook-config=--path-to-file=README.md
+          - --hook-config=--add-to-existing-file=true
+          - --hook-config=--create-file-if-not-exist=true
+      - id: terraform_tflint
+        args:
+          - --args=--only=terraform_deprecated_interpolation
+          - --args=--only=terraform_deprecated_index
+          - --args=--only=terraform_unused_declarations
+          - --args=--only=terraform_comment_syntax
+          - --args=--only=terraform_documented_outputs
+          - --args=--only=terraform_documented_variables
+          - --args=--only=terraform_typed_variables
+          - --args=--only=terraform_module_pinned_source
+          - --args=--only=terraform_naming_convention
+          - --args=--only=terraform_required_version
+          - --args=--only=terraform_required_providers
+          - --args=--only=terraform_standard_module_structure
+          - --args=--only=terraform_workspace_remote
+
+  # Security scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: ^.*\.lock\.hcl$
+
+  # Infrastructure security
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.1.34
+    hooks:
+      - id: checkov
+        args: [
+          '--framework', 'terraform',
+          '--skip-check', 'CKV_AWS_79',  # S3 bucket logging - handled by centralized logging
+          '--skip-check', 'CKV_GCP_62', # GCS bucket logging - handled by centralized logging
+          '--compact',
+          '--quiet'
+        ]
+        language: python
+        entry: checkov
+        types: [terraform]
+        require_serial: false
+
+  # YAML linting
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        args: [-c=.yamllint.yaml]
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--config', '.markdownlint.json', '--fix']
+
+  # Commit message formatting
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [
+          'build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 
+          'refactor', 'revert', 'style', 'test', 'sec', 'compliance'
+        ]
+
+  # File size check
+  - repo: local
+    hooks:
+      - id: file-size-check
+        name: Check file sizes
+        entry: sh -c 'find . -type f -size +1M -not -path "./.git/*" -not -path "./.*" | while read file; do echo "File $file is larger than 1MB"; done; exit 0'
+        language: system
+        pass_filenames: false
+
+  # Terragrunt specific checks
+  - repo: local
+    hooks:
+      - id: terragrunt-fmt
+        name: Terragrunt fmt
+        entry: sh -c 'find . -name "*.hcl" -exec terragrunt hclfmt {} \;'
+        language: system
+        files: \.hcl$
+        pass_filenames: false
+
+      - id: terragrunt-validate-inputs
+        name: Terragrunt validate inputs
+        entry: sh -c 'find . -name "terragrunt.hcl" | while read file; do dir=$(dirname "$file"); echo "Validating $dir"; (cd "$dir" && terragrunt validate-inputs --terragrunt-non-interactive) || exit 1; done'
+        language: system
+        files: terragrunt\.hcl$
+        pass_filenames: false
+
+  # Security policy validation
+  - repo: local
+    hooks:
+      - id: security-policy-check
+        name: Security policy validation
+        entry: sh -c 'python3 scripts/validate-security-policies.py'
+        language: system
+        files: \.(hcl|yaml|yml|tf)$
+        pass_filenames: false
+
+  # Documentation validation
+  - repo: local
+    hooks:
+      - id: docs-validation
+        name: Documentation validation
+        entry: sh -c 'python3 scripts/validate-docs.py'
+        language: system
+        files: \.(md|hcl|yaml|yml)$
+        pass_filenames: false

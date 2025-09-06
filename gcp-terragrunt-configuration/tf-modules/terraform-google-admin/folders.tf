@@ -35,7 +35,7 @@ locals {
   level5 = [for folder in var.folders.level5 : "${folder.parent}/${folder.name}"]
 }
 resource "google_folder" "level_5" {
-  for_each     = toset(local.level4)
+  for_each     = toset(local.level5)
   display_name = split("/", each.key)[4]
   parent       = google_folder.level_4[join("/", slice(split("/", each.key), 0, 4))].name
 }

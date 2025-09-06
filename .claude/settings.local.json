@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(terraform init:*)",
+      "Bash(for module in terraform-google-admin terraform-google-audit terraform-google-dd terraform-google-dns terraform-google-firewalls terraform-google-gke terraform-google-glb terraform-google-iam-permissions terraform-google-memorystore terraform-google-peering terraform-google-projects terraform-google-sql terraform-google-svpc terraform-google-vpn)",
+      "Bash(do echo \"=== $module ===\")",
+      "Bash(ls:*)",
+      "Bash(done)",
+      "Bash(do echo -n \"$module: \")",
+      "Bash(if [ -f \"/Users/ynaumenko/Desktop/git/multi-cloud-runway/gcp-terragrunt-configuration/tf-modules/$module/versions.tf\" ])",
+      "Bash(then echo \"versions.tf ✓\")",
+      "Bash(else echo \"versions.tf ✗\")",
+      "Bash(fi)",
+      "Bash(if [ -f \"/Users/ynaumenko/Desktop/git/multi-cloud-runway/gcp-terragrunt-configuration/tf-modules/$module/outputs.tf\" ])",
+      "Bash(then echo \"outputs.tf ✓\")",
+      "Bash(else echo \"outputs.tf ✗\")",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(if [ ! -f \"$dir/versions.tf\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(do echo \"=== Formatting $module ===\")",
+      "Bash(if [ -d \"$module\" ])",
+      "Bash([ \"$module\" != \"terraform-google-admin/.terraform\" ])",
+      "Bash(then cd \"$module\")",
+      "Bash(terraform fmt:*)",
+      "Bash(do echo \"=== Validating $module ===\")",
+      "Bash(terraform:*)",
+      "Bash(else echo \"Directory not found\")",
+      "Bash(terragrunt validate:*)",
+      "Bash(do if [ -f \"$module/README.md\" ])",
+      "Bash(then echo \"✅ $module\")",
+      "Bash(else echo \"❌ $module\")",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

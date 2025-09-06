@@ -15,7 +15,7 @@ variable "environment" {
 
 variable "service_project_name" {
   description = "Service project name"
-  type = string
+  type        = string
 }
 
 variable "service_projects" {
@@ -50,11 +50,11 @@ variable "vpcs" {
 variable "kms_rings" {
   description = "Map of KMS keyrings with keys and owners"
   type = map(object({
-    keyring         = string
-    location        = string
-    keys            = list(string)
-    set_owners_for  = list(string)
-    owners          = list(string)
+    keyring        = string
+    location       = string
+    keys           = list(string)
+    set_owners_for = list(string)
+    owners         = list(string)
   }))
   default = {}
 }

@@ -44,7 +44,7 @@ variable "domain" {
 }
 
 variable "admin_folder" {
-  description = "Wheater to create admin folder or not"
+  description = "Whether to create admin folder or not"
   type        = bool
   default     = true
 }
@@ -55,8 +55,8 @@ variable "skip_gcloud_download" {
   default     = true
 }
 
-variable "create_admin_bukets" {
-  description = "Wheater to create admin_state_bucket. Turn this off when using with Terraform Cloud."
+variable "create_admin_buckets" {
+  description = "Whether to create admin_state_bucket. Turn this off when using with Terraform Cloud."
   type        = bool
   default     = true
 }

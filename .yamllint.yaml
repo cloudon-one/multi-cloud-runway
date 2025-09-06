@@ -1,0 +1,70 @@
+# YAML Lint Configuration for Multi-Cloud Infrastructure
+extends: default
+
+rules:
+  # Allow long lines for complex configurations
+  line-length:
+    max: 120
+    level: warning
+    
+  # Allow multiple documents in single file
+  document-start: disable
+  
+  # Allow empty values in YAML (common in Terragrunt)
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+    
+  # Indentation rules
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+    
+  # Allow trailing spaces in comments
+  trailing-spaces:
+    level: error
+    
+  # Comments formatting
+  comments:
+    min-spaces-from-content: 1
+    
+  # Key duplicates
+  key-duplicates: error
+  
+  # Brackets and braces
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    
+  # Commas
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+    
+  # Hyphens
+  hyphens:
+    max-spaces-after: 1
+    
+  # Truthy values (allow yes/no, on/off, etc.)
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: true
+    
+  # Octal values
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+# File patterns to ignore
+ignore: |
+  *.tfstate
+  *.tfstate.*
+  .terragrunt-cache/
+  node_modules/
+  .git/
