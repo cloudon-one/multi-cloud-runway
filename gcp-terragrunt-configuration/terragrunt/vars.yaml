@@ -1,6 +1,6 @@
 common:
   billing_account: &billing_account ""
-  domain: &domain "cloudon.work"
+  domain: &domain "cloudon-one.com"
   org_id: "1234567890"
   root_folder: "1234567890"
   suffix: "tf-state"
@@ -43,36 +43,36 @@ envs:
           net-dns:
             inputs:
               project_id: ""
-              name: "cloudon.work"
+              name: "cloudon-one.com"
               type: "public"
-              domain: cloudon.work.
+              domain: cloudon-one.com.
               description: "Managed by Terraform"
               recordsets:
-              - name: "eu.dev.cloudon.work"
+              - name: "eu.dev.cloudon-one.com"
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.","ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
-              - name: "eu.prod.cloudon.work"
+              - name: "eu.prod.cloudon-one.com"
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.","ns-cloud-d4.googledomains.com."]
-              - name: "eu.prod.cloudon.work"
+              - name: "eu.prod.cloudon-one.com"
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
-              - name: "eu.stg.cloudon.work"
+              - name: "eu.stg.cloudon-one.com"
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
-              - name: "us.prod.cloudon.work"
-                type: "`NS"
+              - name: "us.prod.cloudon-one.com"
+                type: "NS"
                 ttl: 300
                 records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
               - name: ""
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
-              - name: "us.stg.cloudon.work"
+              - name: "us.stg.cloudon-one.com"
                 type: "NS"
                 ttl: 300
                 records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]  
@@ -108,58 +108,58 @@ envs:
           folder:
             bindings:
               "roles/owner":
-                - "group:gcp-network-admins@cloudon.work"
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/resourcemanager.folderViewer":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/compute.admin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/container.admin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/errorreporting.admin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/logging.admin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/monitoring.admin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/servicemanagement.quotaAdmin":
-                - "group:gcp-devops@cloudon.work"
+                - "group:gcp-devops@cloudon-one.com"
               "roles/compute.networkAdmin":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/compute.orgSecurityPolicyAdmin":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/bigquery.dataViewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/container.clusterViewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/iam.organizationroleViewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/iam.securityreviewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/logging.configWriter":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/logging.privateLogViewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/orgpolicy.policyAdmin":
-                - "group:gcp-network-admins@cloudon.work"
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/resourcemanager.organizationViewer":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/resourcemanager.folderIamAdmin":
-                - "group:gcp-network-admins@cloudon.work"
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/securitycenter.admin":
-                - "group:gcp-network-admins@cloudon.work"
+                - "group:gcp-network-admins@cloudon-one.com"
               "roles/resourcemanager.folderEditor":
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/AccessTransparencyAdmin":
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/compute.storageAdmin":
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/compute.xpnAdmin":
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-org-admins@cloudon-one.com"
               "roles/resourcemanager.projectCreator":
-                - "group:gcp-org-admins@cloudon.work"
+                - "group:gcp-org-admins@cloudon-one.com"
 
       audit:
         inputs:
@@ -253,9 +253,9 @@ envs:
           inputs:
             name: "dev-gcp-cloudon-one"
             type: "public"
-            domain: "dev.gcp.cloudon.work"
+            domain: "dev.gcp.cloudon-one.com"
             recordsets:
-              - name: "dev-sql.dev.gcp.cloudon.work"
+              - name: "dev-sql.dev.gcp.cloudon-one.com"
                 type: "A"
                 ttl: 300
                 records: [""]
@@ -304,7 +304,7 @@ envs:
             svc-project:
               bindings:
                 "roles/editor":
-                  - "group:gcp-admin@cloudon.work"
+                  - "group:gcp-admin@cloudon-one.com"
 
         svc-gke:
           inputs:
@@ -476,9 +476,9 @@ envs:
           inputs:
             name: "prod-gcp-cloudon-one"
             type: "public"
-            domain: "prod.gcp.cloudon.work"
+            domain: "prod.gcp.cloudon-one.com"
             recordsets:
-              - name: "prod-sql.prod.gcp.cloudon.work"
+              - name: "prod-sql.prod.gcp.cloudon-one.com"
                 type: "A"
                 ttl: 300
                 records: [""]
@@ -758,9 +758,9 @@ envs:
 
         net-dns:
           inputs:
-            name: "eu-dev-cloudon.work"
+            name: "eu-dev-cloudon-one.com"
             type: "public"
-            domain: eu.dev.cloudon.work
+            domain: eu.dev.cloudon-one.com
             description: "Managed by Terraform"
 
         svc-projects:
@@ -874,7 +874,7 @@ envs:
             svc-project:
               bindings:
                 "roles/editor":
-                  - "group:gcp-devops@cloudon.work"
+                  - "group:gcp-devops@cloudon-one.com"
             workload_identity_iam:
               circle-runner:
                 k8s_sa_name: ci-runner
@@ -985,9 +985,9 @@ envs:
 
         net-dns:
           inputs:
-            name: "eu-stg-cloudon.work"
+            name: "eu-stg-cloudon-one.com"
             type: "public"
-            domain: eu.stg.cloudon.work
+            domain: eu.stg.cloudon-one.com
             description: "Managed by Terraform"
 
         net-firewalls:
@@ -1106,7 +1106,7 @@ envs:
             svc-project:
               bindings:
                 "roles/editor":
-                  - "group:gcp-devops@cloudon.work"
+                  - "group:gcp-devops@cloudon-one.com"
             workload_identity_iam:
               circle-runner:
                 k8s_sa_name: ci-runner
@@ -1156,10 +1156,10 @@ envs:
             address: "10.154.165.0"
             memory_size_gb: "1"
             redis_version: "rEDIS_5_0"
-            connect_mode: "PrIVATE_SErVICE_ACCESS"
-   
-      region: &us-stg-region "us-east1"
-      resources:
+          connect_mode: "PrIVATE_SErVICE_ACCESS"
+  us:
+    region: &us-stg-region "us-east1"
+    resources:
         net-vpc:
           inputs:
             billing_account: *billing_account
@@ -1208,9 +1208,9 @@ envs:
 
         net-dns:
           inputs:
-            name: "us-stg-cloudon.work"
+            name: "us-stg-cloudon-one.com"
             type: "public"
-            domain: us.stg.cloudon.work
+            domain: us.stg.cloudon-one.com
             description: "Managed by Terraform"
 
         net-iam-permissions:
@@ -1267,7 +1267,7 @@ envs:
             create_service_account: true
             enable_network_egress_export: false
             enable_resource_consumption_export: true
-            release_channel: "rEGULAr"
+            release_channel: "regular"
             master_authorized_networks:
               - cidr_block: "10.157.0.0/16"
                 display_name: "stg vpc cidr"
@@ -1335,7 +1335,7 @@ envs:
             svc-project:
               bindings:
                 "roles/editor":
-                  - "group:gcp-devops@cloudon.work"
+                  - "group:gcp-devops@cloudon-one.com"
             workload_identity_iam:
               circle-runner:
                 k8s_sa_name: ci-runner
@@ -1474,9 +1474,9 @@ envs:
 
         net-dns:
           inputs:
-            name: "us-prod-cloudon.work"
+            name: "us-prod-cloudon-one.com"
             type: "public"
-            domain: us.prod.cloudon.work
+            domain: us.prod.cloudon-one.com
             description: "Managed by Terraform"
 
         net-glb:
@@ -1642,7 +1642,7 @@ envs:
             location_id: "us-east1-b"
             address: "10.156.165.0"
             memory_size_gb: "1"
-            redis_version: "rEDIS_5_0"
+            redis_version: "REDIS_5_0"
             connect_mode: "PrIVATE_SErVICE_ACCESS"
     eu:
       region: &eu-prod-region "europe-west1"
@@ -1681,7 +1681,7 @@ envs:
                 subnet_region: *eu-prod-region
                 subnet_private_access: false
                 subnet_flow_logs: false
-                purpose: "INTErNAL_HTTPS_LOAD_BALANCEr"
+                purpose: "INTERNAL_HTTPS_LOAD_BALANCEr"
                 role: "ACTIVE"
 
             secondary_ranges:
@@ -1730,9 +1730,9 @@ envs:
 
         net-dns:
           inputs:
-            name: "eu-prod-cloudon.work"
+            name: "eu-prod-cloudon-one-com"
             type: "public"
-            domain: eu.prod.cloudon.work
+            domain: eu.prod.cloudon-one.com
             description: "Managed by Terraform"
 
         svc-projects:
@@ -1893,5 +1893,5 @@ envs:
             location_id: "europe-west1-b"
             address: "10.155.165.0"
             memory_size_gb: "1"
-            redis_version: "rEDIS_5_0"
-            connect_mode: "PrIVATE_SErVICE_ACCESS"
+            redis_version: "REDIS_5_0"
+            connect_mode: "PRIVATE_SERVICE_ACCESS"
