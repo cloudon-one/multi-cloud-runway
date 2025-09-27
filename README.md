@@ -141,7 +141,8 @@ graph TB
 ## 🚀 Prerequisites
 
 ### Tools
-- Terragrunt >= v0.60.0
+
+- Terragrunt >= v0.70.0
 - Terraform >= v1.5.0
 - AWS CLI configured
 - GCP SDK installed
@@ -149,12 +150,14 @@ graph TB
 - Helm v3.x
 
 ### Cloud Provider Setup
+
 1. AWS Account Setup:
    ```bash
    aws configure
    ```
 
 2. GCP Project Setup:
+
    ```bash
    gcloud auth application-default login
    ```
@@ -162,12 +165,15 @@ graph TB
 ## 🔑 Network Architecture
 
 ### AWS VPC Configuration
+
 - Transit Gateway for inter-VPC connectivity
 - Direct Connect for on-premises integration
 - VPC endpoints for AWS services
 
 ### GCP VPC Configuration
+
 Each environment has dedicated VPCs:
+
 - Shared Dev VPC: 10.151.0.0/16
 - Shared Prod VPC: 10.152.0.0/16
 - Dev EU VPC: 10.153.0.0/16
@@ -177,6 +183,7 @@ Each environment has dedicated VPCs:
 ## 🔒 Security & Compliance
 
 ### Compliance Standards
+
 - **PCI DSS**: Payment Card Industry Data Security Standard
 - **CIS Benchmarks**: Center for Internet Security configuration standards
 - **SOC 2 Type II**: System and Organization Controls
@@ -186,12 +193,14 @@ Each environment has dedicated VPCs:
 ### Security Features
 
 #### Multi-Layer Security
+
 - **Network Isolation**: Private subnets, VPC segmentation, firewall rules
 - **Encryption**: At-rest and in-transit encryption using cloud-native KMS
 - **Identity Management**: Role-based access, Workload Identity, MFA enforcement
 - **Monitoring**: Real-time security monitoring, audit logging, threat detection
 
 #### Security Tools
+
 - **AWS**: GuardDuty, CloudTrail, Config, Security Hub, WAF
 - **GCP**: Security Command Center, Cloud Armor, Binary Authorization
 - **Third-party**: Automated security scanning with tfsec, checkov
@@ -212,11 +221,13 @@ python3 scripts/validate-security-policies.py
 ## 📊 Kubernetes Infrastructure
 
 ### AWS EKS
+
 - Managed node groups
 - Fargate profiles
 - ALB integration
 
 ### GCP GKE
+
 - Private clusters
 - Multiple node pools:
   - Service node pool
@@ -227,12 +238,14 @@ python3 scripts/validate-security-policies.py
 ## 🔧 Database Infrastructure
 
 ### AWS Databases
+
 - Amazon RDS
 - Aurora clusters
 - DynamoDB tables
 - ElastiCache Redis
 
 ### GCP Databases
+
 - Cloud SQL (PostgreSQL):
   - Development: PostgreSQL 11
   - Production: PostgreSQL 12
@@ -276,6 +289,7 @@ Automated quality gates ensure code quality:
 ### CI/CD Integration
 
 The repository includes automated pipelines for:
+
 - Infrastructure validation and security scanning
 - Compliance checks against multiple frameworks
 - Cost impact analysis
@@ -296,6 +310,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 ### Code Quality
 
 All contributions must pass:
+
 - ✅ Security validation
 - ✅ Compliance checks  
 - ✅ Terraform validation
@@ -321,6 +336,7 @@ All contributions must pass:
 ### State Management
 
 **AWS**: S3 backend with DynamoDB locking
+
 ```bash
 # Backup state
 make backup-state
@@ -331,6 +347,7 @@ terragrunt state show <resource>
 ```
 
 **GCP**: GCS backend with regional distribution
+
 - Automatic versioning and encryption
 - Cross-region replication for reliability
 - State locking with Cloud Storage
@@ -349,6 +366,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Third-Party Components
 
 This project uses various open-source components. See individual component licenses for details:
+
 - Terraform (MPL 2.0)
 - Terragrunt (MIT)
 - Cloud provider CLIs (respective licenses)
@@ -377,18 +395,21 @@ Developed by [CloudOn.One](https://cloudon.work) - Multi-cloud infrastructure sp
 ## 🎯 Roadmap
 
 ### Current Focus
+
 - ✅ Multi-cloud landing zone implementation
 - ✅ Security hardening and compliance
 - ✅ Automated validation and testing
 - ✅ Comprehensive documentation
 
 ### Upcoming Features
+
 - 🔄 Service mesh integration (Istio/Linkerd)
 - 🔄 GitOps workflow implementation
 - 🔄 Advanced monitoring and observability
 - 🔄 Additional cloud provider support
 
 ### Future Enhancements
+
 - 📋 Cost optimization automation
 - 📋 Policy as Code framework
 - 📋 Multi-cluster service management
@@ -400,7 +421,7 @@ Developed by [CloudOn.One](https://cloudon.work) - Multi-cloud infrastructure sp
 
 - **📝 Issues**: [GitHub Issues](https://github.com/cloudon-one/multi-cloud-runway/issues) for bugs and feature requests
 - **💬 Discussions**: [GitHub Discussions](https://github.com/cloudon-one/multi-cloud-runway/discussions) for questions and ideas
-- **📧 Security**: security@cloudon.work for security-related issues
+- **📧 Security**: <security@cloudon-one.com> for security-related issues
 - **📖 Documentation**: Comprehensive docs in each platform directory
 
 ### Support Channels

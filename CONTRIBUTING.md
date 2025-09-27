@@ -32,7 +32,7 @@ Ensure you have the following tools installed and configured:
 ```bash
 # Required tools
 terraform --version  # >= 1.5.0
-terragrunt --version  # >= 0.60.0
+terragrunt --version  # >= 0.70.0
 aws --version        # >= 2.0.0
 gcloud version       # Latest SDK
 
@@ -45,17 +45,20 @@ pre-commit --version # For commit hooks
 ### Environment Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/cloudon-one/multi-cloud-runway.git
    cd multi-cloud-runway
    ```
 
 2. **Install pre-commit hooks:**
+
    ```bash
    pre-commit install
    ```
 
 3. **Configure cloud credentials:**
+
    ```bash
    # AWS
    aws configure
@@ -65,6 +68,7 @@ pre-commit --version # For commit hooks
    ```
 
 4. **Set up development workspace:**
+
    ```bash
    # Create development branch
    git checkout -b feature/your-feature-name
@@ -101,6 +105,7 @@ Closes #123
 ```
 
 **Types:**
+
 - `feat`: New feature or service
 - `fix`: Bug fix or security patch
 - `docs`: Documentation updates
@@ -110,6 +115,7 @@ Closes #123
 - `compliance`: Compliance-related changes
 
 **Examples:**
+
 ```
 feat(aws): add GuardDuty configuration for security monitoring
 
@@ -125,6 +131,7 @@ Closes #456
 ### Terragrunt Best Practices
 
 1. **Configuration Structure:**
+
    ```hcl
    # Always include common configuration
    include "common" {
@@ -188,6 +195,7 @@ service-name/
 ### Dependencies
 
 1. **Explicit Dependencies:**
+
    ```hcl
    dependency "vpc" {
      config_path = "../../../vpc/us-east-2/dev"
@@ -212,6 +220,7 @@ service-name/
 ### Pre-deployment Validation
 
 1. **Syntax Validation:**
+
    ```bash
    # Validate Terraform syntax
    terragrunt validate
@@ -224,6 +233,7 @@ service-name/
    ```
 
 2. **Security Scanning:**
+
    ```bash
    # Security policy validation
    tfsec .
@@ -236,6 +246,7 @@ service-name/
    ```
 
 3. **Plan Review:**
+
    ```bash
    # Generate and review plan
    terragrunt plan
@@ -265,6 +276,7 @@ All pull requests trigger automated testing including:
 ### Required Documentation
 
 1. **Service README.md:**
+
    ```markdown
    # Service Name
    
@@ -382,7 +394,7 @@ All contributions must undergo security review focusing on:
 - **General Questions**: Create a GitHub issue with the `question` label
 - **Bug Reports**: Use the bug report template
 - **Feature Requests**: Use the feature request template
-- **Security Issues**: Email security@cloudon.work directly
+- **Security Issues**: Email [security@cloudon-one.com](mailto:security@cloudon-one.com) directly
 
 ### Communication Channels
 

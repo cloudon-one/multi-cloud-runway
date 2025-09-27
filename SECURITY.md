@@ -58,9 +58,10 @@ This infrastructure implements the following security frameworks:
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please send an email to: **security@cloudon.work**
+Instead, please send an email to: **<security@cloudon-one.com>**
 
 Include the following information:
+
 - Description of the potential vulnerability
 - Steps to reproduce the issue
 - Potential impact assessment
@@ -113,12 +114,14 @@ We encourage responsible security research including:
 ### Environment-Specific Controls
 
 #### Production Environments
+
 - **Deletion Protection**: Enabled for all critical resources
 - **Backup Retention**: Minimum 30 days with cross-region replication
 - **Change Management**: Peer review required for all changes
 - **Monitoring**: Enhanced monitoring and alerting enabled
 
 #### Development/Staging Environments  
+
 - **Cost Controls**: Resource limits and automatic shutdown
 - **Data Masking**: Production data anonymization
 - **Time-bound Access**: Temporary elevated permissions
@@ -168,9 +171,9 @@ We encourage responsible security research including:
 
 ## Contact Information
 
-- **Security Team**: security@cloudon.work
-- **Infrastructure Team**: devops@cloudon.work
-- **Compliance Officer**: compliance@cloudon.work
+- **Security Team**: <security@cloudon-one.com>
+- **Infrastructure Team**: <devops@cloudon-one.com>
+- **Compliance Officer**: <compliance@cloudon-one.com>
 
 ## Updates
 
