@@ -69,6 +69,8 @@ checkov-results.json
 local/
 dev/
 test-results/
+CLAUDE.md
+
 
 # Cloud credentials
 credentials.json
@@ -98,3 +100,5 @@ vendor/
 
 # Lock files (should be committed for modules)
 # .terraform.lock.hcl  # Uncomment if you want to ignore lock files
+.claude/settings.local.json
+
