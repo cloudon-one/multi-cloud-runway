@@ -215,24 +215,24 @@ Environments:
           policies:
             - name: "dev-infra-protection"
               description: "Dev OU protection policy"
-              policy: "policies/dev_infra.json"
+              content: "policies/dev_infra.json"
               target_ids:
                 - "ou-XXXX-XXXXXXXX"
-            - name: "dev-workloads-protection" 
+            - name: "dev-workloads-protection"
               description: "Dev OU protection policy"
-              policy: "policies/dev.json"
+              content: "policies/dev.json"
               target_ids:
-                - "ou-XXXX-XXXXXXXX"  
-            - name: "global-protection"   
+                - "ou-XXXX-XXXXXXXX"
+            - name: "global-protection"
               description: "Global protection policy"
-              policy: "policies/global.json"
+              content: "policies/global.json"
               target_ids:
                 - "r-XXXXX"
-            - name: "prod-infra-protection" 
+            - name: "prod-infra-protection"
               description: "Prod OU protection policy"
-              policy: "policies/prod_infra.json"
+              content: "policies/prod_infra.json"
               target_ids:
-                - "ou-XXXX-XXXXXXXX" 
+                - "ou-XXXX-XXXXXXXX"
 
 
   us-dev:
@@ -336,12 +336,14 @@ Environments:
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "configs"
+              Terraform: "true"
           - bucket_name: "us-dev-data"
             tags:
               Environment: "us-dev"
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "data"
+              Terraform: "true"
       ec2:
         region: *DefReg
         inputs:
@@ -387,10 +389,6 @@ Environments:
             capacity_type: "SPOT"
             access_entries:
             - principal: "arn:aws:iam::XXXXXXXXXXXXXX:role/admins"
-              type: STANDARD
-              access_policies:
-                - AmazonEKSAdminPolicy
-                - AmazonEKSClusterAdminPolicy
               kubernetes_groups:
                 - system:masters
             tags:
@@ -559,12 +557,14 @@ Environments:
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "configs"
+              Terraform: "true"
           - bucket_name: "us-stg-data"
             tags:
               Environment: "us-stg"
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "data"
+              Terraform: "true"
       ec2:
         region: *DefReg
         inputs:
@@ -610,10 +610,6 @@ Environments:
             capacity_type: "SPOT"
             access_entries:
             - principal: "arn:aws:iam::XXXXXXXXXXXXXX:role/admins"
-              type: STANDARD
-              access_policies:
-                - AmazonEKSAdminPolicy
-                - AmazonEKSClusterAdminPolicy
               kubernetes_groups:
                 - system:masters
             tags:
@@ -777,12 +773,14 @@ Environments:
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "configs"
+              Terraform: "true"
           - bucket_name: "eu-stg-data"
             tags:
               Environment: "eu-stg"
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "data"
+              Terraform: "true"
       ec2:
         region: *EUReg
         inputs:
@@ -828,10 +826,6 @@ Environments:
             capacity_type: "SPOT"
             access_entries:
             - principal: "arn:aws:iam::XXXXXXXXXXXXXX:role/admins"
-              type: STANDARD
-              access_policies:
-                - AmazonEKSAdminPolicy
-                - AmazonEKSClusterAdminPolicy
               kubernetes_groups:
                 - system:masters
             tags:
@@ -995,12 +989,14 @@ Environments:
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "configs"
+              Terraform: "true"
           - bucket_name: "eu-prod-data"
             tags:
               Environment: "eu-prod"
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "data"
+              Terraform: "true"
       ec2:
         region: *EUReg
         inputs:
@@ -1046,10 +1042,6 @@ Environments:
             capacity_type: "SPOT"
             access_entries:
             - principal: "arn:aws:iam::XXXXXXXXXXXXXX:role/admins"
-              type: STANDARD
-              access_policies:
-                - AmazonEKSAdminPolicy
-                - AmazonEKSClusterAdminPolicy
               kubernetes_groups:
                 - system:masters
             tags:
@@ -1213,12 +1205,14 @@ Environments:
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "configs"
+              Terraform: "true"
           - bucket_name: "us-prod-data"
             tags:
               Environment: "us-prod"
               Owner: "Data"
               Description: "Backend S3 bucket"
               Name: "data"
+              Terraform: "true"
       ec2:
         region: *DefReg
         inputs:
@@ -1264,10 +1258,6 @@ Environments:
             capacity_type: "SPOT"
             access_entries:
             - principal: "arn:aws:iam::XXXXXXXXXXXXXX:role/admins"
-              type: STANDARD
-              access_policies:
-                - AmazonEKSAdminPolicy
-                - AmazonEKSClusterAdminPolicy
               kubernetes_groups:
                 - system:masters
             tags:

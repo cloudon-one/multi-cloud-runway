@@ -16,6 +16,4 @@ locals {
   resource_vars = local.common_vars["Environments"]["master"]["Resources"]["iam"]["inputs"]["users"]
 }
 
-inputs = {
-  users = local.resource_vars["inputs"]
-}
+inputs = local.resource_vars["inputs"][0]

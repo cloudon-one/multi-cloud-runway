@@ -12,10 +12,8 @@ terraform {
 }
 
 locals {
-  common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
-  resource_vars = local.common_vars["Environments"]["master"]["Resources"]["iam"]["inputs"]["roles"]
+  common_vars = yamldecode(file(find_in_parent_folders("vars.yaml")))
 }
 
-inputs = {
-  roles = local.resource_vars
-}
+# NOTE: Remote module (aws-terraform-iam/roles) is a placeholder with no variables defined yet.
+# Inputs will be added once the module is implemented.
