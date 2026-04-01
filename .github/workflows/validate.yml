@@ -69,7 +69,10 @@ jobs:
         run: pip install yamllint
 
       - name: Run yamllint
-        run: yamllint -c .yamllint.yaml .
+        run: |
+          yamllint -c .yamllint.yaml \
+            .yamllint.yaml \
+            .github/workflows/*.yml
 
   markdown-lint:
     name: Markdown Lint
