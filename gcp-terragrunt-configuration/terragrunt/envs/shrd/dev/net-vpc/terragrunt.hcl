@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../../../tf-modules//terraform-google-shared-vpc"
+  source = "../../../../../tf-modules//terraform-google-svpc"
 }
 
 inputs = merge(local.resource_vars["inputs"], {

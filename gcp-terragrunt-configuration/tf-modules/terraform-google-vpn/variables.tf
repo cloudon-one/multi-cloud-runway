@@ -16,7 +16,6 @@ variable "region" {
 variable "gateway_name" {
   type        = string
   description = "The name of VPN gateway"
-  default     = "test-vpn"
 }
 
 variable "tunnel_count" {
@@ -68,9 +67,11 @@ variable "shared_secret" {
   type        = string
   description = "Please enter the shared secret/pre-shared key"
   default     = ""
+  sensitive   = true
 }
 
 variable "route_priority" {
+  type        = number
   description = "Priority for static route being created"
   default     = 1000
 }
@@ -106,6 +107,7 @@ variable "bgp_remote_session_range" {
 }
 
 variable "advertised_route_priority" {
+  type        = number
   description = "Please enter the priority for the advertised route to BGP peer(default is 100)"
   default     = 100
 }

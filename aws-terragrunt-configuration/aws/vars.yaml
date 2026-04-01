@@ -27,43 +27,43 @@ Environments:
         inputs:
           us-dev:
             account_name: "cloudon_dev"
-            account_email: "aws_env_dev@cloudon.work"
+            account_email: "aws_env_dev@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           us-stg:
             account_name: "cloudon_stg"
-            account_email: "aws_env_stg@cloudon.work"
+            account_email: "aws_env_stg@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
-          us-prod:  
-            account_name: "cloudon_eu_prod"
-            account_email: "aws_env_eu_prod@cloudon.work"
+          us-prod:
+            account_name: "cloudon_us_prod"
+            account_email: "aws_env_us_prod@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           eu-stg:
             account_name: "cloudon_eu_stg"
-            account_email: "aws_env_eu_stg@cloudon.work"  
+            account_email: "aws_env_eu_stg@cloudon-one.com"  
             ou: "ou-XXXX-XXXXXXXX"
           eu-prod:  
             account_name: "cloudon_eu_prod"
-            account_email: "aws_env_eu_prod@cloudon.work"
+            account_email: "aws_env_eu_prod@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           management:
             account_name: "cloudon_master"
-            account_email: "aws_masters@cloudon.work" 
+            account_email: "aws_masters@cloudon-one.com" 
             ou: "ou-XXXX-XXXXXXXX"
           security:
             account_name: "cloudon_security"
-            account_email: "aws_security@cloudon.work" 
+            account_email: "aws_security@cloudon-one.com" 
             ou: "ou-XXXX-XXXXXXXX"
           log-archive:
             account_name: "cloudon_log_archive"
-            account_email: "aws_log_archive@cloudon.work"   
+            account_email: "aws_log_archive@cloudon-one.com"   
             ou: "ou-XXXX-XXXXXXXX"
           shared-services:
             account_name: "cloudon_shared_svc"
-            account_email: "aws_env_shared_svc@cloudon.work"  
+            account_email: "aws_env_shared_svc@cloudon-one.com"  
             ou: "ou-XXXX-XXXXXXXX"
           network:
-            account_name: "cludon_network"
-            account_email: "aws_network@cloudon.work"
+            account_name: "cloudon_network"
+            account_email: "aws_network@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"    
       iam:
         inputs:
@@ -401,12 +401,12 @@ Environments:
       acm:
         region: *DefReg
         inputs:
-        domain_name: "*.cloudon.work"
+        domain_name: "*.cloudon-one.com"
         tags:
           Environment: "us-dev"
           Department: "Infra"
           ManagedBy: "Terraform"
-          Name: "cloudon.work"
+          Name: "cloudon-one.com"
       vpn:  
         region: *DefReg
         inputs:
@@ -431,7 +431,7 @@ Environments:
         - name: "us-dev-data-gw"
           description: ""
           stage: "dev"
-          domain_name: "us-dev-data.cloudon.work"
+          domain_name: "us-dev-data.cloudon-one.com"
           sqs_role_arn: *sqs_role 
           endpoint_configuration:
             type: ["REGIONAL"]
@@ -624,12 +624,12 @@ Environments:
       acm:
         region: *DefReg
         inputs:
-        domain_name: "*.cloudon.work"
+        domain_name: "*.cloudon-one.com"
         tags:
           Environment: "us-stg"
           Department: "Infra"
           ManagedBy: "Terraform"
-          Name: "cloudon.work"
+          Name: "cloudon-one.com"
       vpn:  
         region: *DefReg
         inputs:
@@ -654,7 +654,7 @@ Environments:
         - name: "us-stg-data-gw"
           description: ""
           stage: "dev"
-          domain_name: "us-stg-data.cloudon.work"
+          domain_name: "us-stg-data.cloudon-one.com"
           sqs_role_arn: *sqs_role 
           endpoint_configuration:
             type: ["REGIONAL"]
@@ -842,12 +842,12 @@ Environments:
       acm:
         region: *EUReg
         inputs:
-        domain_name: "*.cloudon.work"
+        domain_name: "*.cloudon-one.com"
         tags:
           Environment: "eu-stg"
           Department: "Infra"
           ManagedBy: "Terraform"
-          Name: "cloudon.work"
+          Name: "cloudon-one.com"
       vpn:  
         region: *DefReg
         inputs:
@@ -872,7 +872,7 @@ Environments:
         - name: "eu-stg-data-gw"
           description: ""
           stage: "dev"
-          domain_name: "eu-stg-data.cloudon.work"
+          domain_name: "eu-stg-data.cloudon-one.com"
           sqs_role_arn: *sqs_role 
           endpoint_configuration:
             type: ["REGIONAL"]
@@ -1060,12 +1060,12 @@ Environments:
       acm:
         region: *EUReg
         inputs:
-        domain_name: "*.cloudon.work"
+        domain_name: "*.cloudon-one.com"
         tags:
           Environment: "eu-prod"
           Department: "Infra"
           ManagedBy: "Terraform"
-          Name: "cloudon.work"
+          Name: "cloudon-one.com"
       vpn:  
         region: *EUReg
         inputs:
@@ -1090,7 +1090,7 @@ Environments:
         - name: "eu-prod-data-gw"
           description: ""
           stage: "dev"
-          domain_name: "eu-prod-data.cloudon.work"
+          domain_name: "eu-prod-data.cloudon-one.com"
           sqs_role_arn: *sqs_role 
           endpoint_configuration:
             type: ["REGIONAL"]
@@ -1278,12 +1278,12 @@ Environments:
       acm:
         region: *DefReg
         inputs:
-        domain_name: "*.cloudon.work"
+        domain_name: "*.cloudon-one.com"
         tags:
           Environment: "us-prod"
           Department: "Infra"
           ManagedBy: "Terraform"
-          Name: "cloudon.work"
+          Name: "cloudon-one.com"
       vpn:  
         region: *DefReg
         inputs:
@@ -1308,7 +1308,7 @@ Environments:
         - name: "us-prod-data-gw"
           description: ""
           stage: "dev"
-          domain_name: "us-prod-data.cloudon.work"
+          domain_name: "us-prod-data.cloudon-one.com"
           sqs_role_arn: *sqs_role 
           endpoint_configuration:
             type: ["REGIONAL"]

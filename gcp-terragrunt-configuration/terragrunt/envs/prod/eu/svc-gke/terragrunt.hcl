@@ -25,9 +25,9 @@ locals {
 
 inputs = merge(local.resource_vars["inputs"], {
   project_id         = dependency.gke_project.outputs.projects["service"].project_id
-  region             = dependency.host_project.outputs.subnets["$REGION/$SUBNET"].region
+  region             = dependency.host_project.outputs.subnets["europe-west1/gke-subnet"].region
   network            = dependency.host_project.outputs.network_name
   network_project_id = dependency.host_project.outputs.project_id
-  subnetwork         = dependency.host_project.outputs.subnets["$REGION/$SUBNET"].name
+  subnetwork         = dependency.host_project.outputs.subnets["europe-west1/gke-subnet"].name
   identity_namespace = "${dependency.gke_project.outputs.projects["service"].project_id}.svc.id.goog"
 })

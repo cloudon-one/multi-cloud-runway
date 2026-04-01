@@ -25,7 +25,7 @@ locals {
 
 inputs = merge(local.resource_vars["inputs"], {
   project_id         = dependency.sql_project.outputs.projects["service"].project_id
-  region             = dependency.host_project.outputs.subnets["$REGION/$SUBNET"].region
+  region             = dependency.host_project.outputs.subnets["europe-west1/gke-subnet"].region
   vpc_network        = dependency.host_project.outputs.network_name
   network            = dependency.host_project.outputs.network_self_link
   network_project_id = dependency.host_project.outputs.project_id

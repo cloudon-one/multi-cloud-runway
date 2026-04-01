@@ -9,7 +9,7 @@ variable "firewalls" {
     }))
     deny = list(object({
       protocol = string,
-      ports    = string
+      ports    = list(string)
     }))
     destination_ranges      = set(string)
     source_ranges           = set(string)

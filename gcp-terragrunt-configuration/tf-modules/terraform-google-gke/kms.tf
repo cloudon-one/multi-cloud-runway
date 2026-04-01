@@ -15,7 +15,7 @@ resource "google_kms_key_ring" "application_secrets_key_ring" {
   name     = "application-secrets-key-ring-${random_string.kms_key_suffix.0.result}"
 }
 
-resource "google_kms_crypto_key" "application_secretes_key" {
+resource "google_kms_crypto_key" "application_secrets_key" {
   count           = var.database_encryption ? 1 : 0
   key_ring        = google_kms_key_ring.application_secrets_key_ring.0.self_link
   name            = "application-secrets-key-${random_string.kms_key_suffix.0.result}"
@@ -25,7 +25,7 @@ resource "google_kms_crypto_key" "application_secretes_key" {
 
 resource "google_kms_crypto_key_iam_member" "gke_sa_iam_permissions" {
   count         = var.database_encryption ? 1 : 0
-  crypto_key_id = google_kms_crypto_key.application_secretes_key.0.self_link
+  crypto_key_id = google_kms_crypto_key.application_secrets_key.0.self_link
   member        = "serviceAccount:service-${data.google_project.gke_project.number}@container-engine-robot.iam.gserviceaccount.com"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 }
@@ -37,6 +37,6 @@ locals {
   }]
   database_encryption = var.database_encryption ? [{
     state    = "ENCRYPTED"
-    key_name = google_kms_crypto_key.application_secretes_key.0.self_link
+    key_name = google_kms_crypto_key.application_secrets_key.0.self_link
   }] : local.default_database_encryption
 }

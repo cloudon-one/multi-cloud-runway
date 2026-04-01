@@ -1,27 +1,28 @@
-
 include "common" {
   path = find_in_parent_folders("common.hcl")
 }
 
+include "env" {
+  path   = find_in_parent_folders("_env.hcl")
+  expose = true
+}
+
 dependency "vpc" {
   config_path = "../../../vpc/eu/stg"
+  mock_outputs = {
+    vpc_id          = "vpc-mock"
+    private_subnets = ["subnet-mock-0", "subnet-mock-1"]
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 terraform {
-  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-ec2?ref=dev"
-}
-
-locals {
-  common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
-  environment   = basename(get_terragrunt_dir())
-  location      = basename(dirname(get_terragrunt_dir()))
-  resource      = basename(dirname(dirname(get_terragrunt_dir())))
-  resource_vars = local.common_vars["Environments"]["${local.location}-${local.environment}"]["Resources"]["${local.resource}"]
+  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-ec2?ref=${include.env.locals.module_ref}"
 }
 
 inputs = {
   instances = [
-    for instance in local.resource_vars["inputs"] :
+    for instance in include.env.locals.resource_vars["inputs"] :
     merge(instance, {
       subnet_id = dependency.vpc.outputs.private_subnets[0]
     })

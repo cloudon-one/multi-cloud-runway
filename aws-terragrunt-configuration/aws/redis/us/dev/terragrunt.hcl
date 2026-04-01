@@ -2,22 +2,31 @@ include "common" {
   path = find_in_parent_folders("common.hcl")
 }
 
-terraform {
-  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-redis?ref=dev"
+include "env" {
+  path   = find_in_parent_folders("_env.hcl")
+  expose = true
 }
 
-locals {
-  common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
-  environment   = basename(get_terragrunt_dir())
-  location      = basename(dirname(get_terragrunt_dir()))
-  resource      = basename(dirname(dirname(get_terragrunt_dir())))
-  resource_vars = local.common_vars["Environments"]["${local.location}-${local.environment}"]["Resources"]["${local.resource}"]
+dependency "vpc" {
+  config_path = "../../../vpc/us/dev"
+  mock_outputs = {
+    vpc_id                        = "vpc-mock"
+    private_subnets               = ["subnet-mock-0", "subnet-mock-1"]
+    elasticache_subnets           = ["subnet-mock-0", "subnet-mock-1"]
+    redis_sg_id                   = ["sg-mock"]
+    elasticache_subnet_group_name = "mock-subnet-group"
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+}
+
+terraform {
+  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-redis?ref=${include.env.locals.module_ref}"
 }
 
 inputs = merge(
-  local.resource_vars["inputs"],
+  include.env.locals.resource_vars["inputs"],
   {
-    cluster_id         = "${local.location}-${local.environment}-${local.resource}"
+    cluster_id         = "${include.env.locals.location}-${include.env.locals.environment}-${include.env.locals.resource}"
     subnet_ids         = dependency.vpc.outputs.elasticache_subnets
     security_group_ids = dependency.vpc.outputs.redis_sg_id
     subnet_group_name  = dependency.vpc.outputs.elasticache_subnet_group_name

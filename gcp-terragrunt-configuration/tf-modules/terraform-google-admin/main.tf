@@ -35,7 +35,7 @@ resource "google_storage_bucket" "terraform_state_buckets" {
   project                     = module.admin_project.project_id
   location                    = each.value
   uniform_bucket_level_access = true
-  force_destroy               = true
+  force_destroy               = false
   versioning {
     enabled = true
   }
@@ -46,7 +46,7 @@ resource "google_storage_bucket" "this_admin_state_file" {
   project                     = module.admin_project.project_id
   location                    = var.admin_state_bucket_location
   uniform_bucket_level_access = true
-  force_destroy               = true
+  force_destroy               = false
   versioning {
     enabled = true
   }

@@ -10,11 +10,13 @@ variable "project_id" {
 }
 
 variable "datadog_api_key" {
-  description = "Datadog API key, should be uniqe for US/EU"
+  description = "Datadog API key, should be unique for US/EU"
   default     = ""
+  sensitive   = true
 }
 
 variable "datadog_app_key" {
-  description = "Datadog APP key, should be uniqe for US/EU"
+  description = "Datadog APP key, should be unique for US/EU"
   default     = ""
+  sensitive   = true
 }

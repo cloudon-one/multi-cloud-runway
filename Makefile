@@ -42,24 +42,24 @@ aws-destroy: ## Destroy AWS infrastructure
 # GCP targets
 gcp-init: ## Initialize GCP Terragrunt configurations
 	@echo "Initializing GCP configurations..."
-	@cd gcp-terragrunt-configuration/envs && terragrunt run-all init --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all init --terragrunt-non-interactive
 
 gcp-validate: ## Validate GCP Terragrunt configurations
 	@echo "Validating GCP configurations..."
-	@cd gcp-terragrunt-configuration/envs && terragrunt run-all validate --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all validate --terragrunt-non-interactive
 
 gcp-plan: ## Generate GCP infrastructure plan
 	@echo "Planning GCP infrastructure..."
-	@cd gcp-terragrunt-configuration/envs && terragrunt run-all plan --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all plan --terragrunt-non-interactive
 
 gcp-apply: ## Apply GCP infrastructure changes
 	@echo "Applying GCP infrastructure..."
-	@cd gcp-terragrunt-configuration/envs && terragrunt run-all apply --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all apply --terragrunt-non-interactive
 
 gcp-destroy: ## Destroy GCP infrastructure
 	@echo "⚠️  Destroying GCP infrastructure..."
 	@read -p "Are you sure? Type 'yes' to continue: " confirm && [ "$$confirm" = "yes" ]
-	@cd gcp-terragrunt-configuration/envs && terragrunt run-all destroy --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all destroy --terragrunt-non-interactive
 
 # Combined targets
 init: aws-init gcp-init ## Initialize all cloud configurations

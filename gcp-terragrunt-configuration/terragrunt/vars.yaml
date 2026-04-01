@@ -40,43 +40,6 @@ envs:
             level4: []
             level5: []
 
-          net-dns:
-            inputs:
-              project_id: ""
-              name: "cloudon-one.com"
-              type: "public"
-              domain: cloudon-one.com.
-              description: "Managed by Terraform"
-              recordsets:
-              - name: "eu.dev.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.","ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
-              - name: "eu.prod.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.","ns-cloud-d4.googledomains.com."]
-              - name: "eu.prod.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
-              - name: "eu.stg.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
-              - name: "us.prod.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
-              - name: ""
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
-              - name: "us.stg.cloudon-one.com"
-                type: "NS"
-                ttl: 300
-                records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]  
-
           terraform_service_accounts:
             - "tf-dev"
             - "tf-svpc-dev"
@@ -165,6 +128,35 @@ envs:
         inputs:
           billing_account: *billing_account
           domain: *domain
+
+      net-dns:
+        inputs:
+          project_id: ""
+          name: "cloudon-one.com"
+          type: "public"
+          domain: cloudon-one.com.
+          description: "Managed by Terraform"
+          recordsets:
+            - name: "eu.dev.cloudon-one.com"
+              type: "NS"
+              ttl: 300
+              records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
+            - name: "eu.prod.cloudon-one.com"
+              type: "NS"
+              ttl: 300
+              records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
+            - name: "eu.stg.cloudon-one.com"
+              type: "NS"
+              ttl: 300
+              records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
+            - name: "us.prod.cloudon-one.com"
+              type: "NS"
+              ttl: 300
+              records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
+            - name: "us.stg.cloudon-one.com"
+              type: "NS"
+              ttl: 300
+              records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
 
   shrd:
     dev:
@@ -709,7 +701,7 @@ envs:
                 subnet_region: *eu-dev-region
                 subnet_private_access: false
                 subnet_flow_logs: false
-                purpose: "INTErNAL_HTTPS_LOAD_BALANCEr"
+                purpose: "INTERNAL_HTTPS_LOAD_BALANCER"
                 role: "ACTIVE"
 
             secondary_ranges:
@@ -752,6 +744,9 @@ envs:
                 target_tags:
                   - "service-node-pool"
                 log_config: []
+
+        net-vpn:
+          inputs:
 
         net-vpc-attachments:
           inputs:
@@ -894,7 +889,7 @@ envs:
           inputs:
             name: "cloudon-dev-eu-sql"
             random_instance_name: true
-            database_version: "POSTGrES_11"
+            database_version: "POSTGRES_11"
             deletion_protection: false
             availability_type: "REGIONAL"
             zone: "europe-west1-b"
@@ -930,8 +925,8 @@ envs:
             location_id: "europe-west1-b"
             address: "10.153.165.0"
             memory_size_gb: "1"
-            redis_version: "rEDIS_5_0"
-            connect_mode: "PrIVATE_SErVICE_ACCESS"
+            redis_version: "REDIS_5_0"
+            connect_mode: "PRIVATE_SERVICE_ACCESS"
 
   stg:
     eu:
@@ -993,7 +988,16 @@ envs:
         net-firewalls:
           inputs:
 
+        net-vpn:
+          inputs:
+
         net-vpc-attachments:
+          inputs:
+
+        net-iam-permissions:
+          inputs:
+
+        svc-datadog:
           inputs:
 
         svc-projects:
@@ -1119,7 +1123,7 @@ envs:
           inputs:
             name: "cloudon-stg-eu-sql"
             random_instance_name: true
-            database_version: "POSTGrES_11"
+            database_version: "POSTGRES_11"
             deletion_protection: false
             availability_type: "REGIONAL"
             zone: "europe-west1-b"
@@ -1155,8 +1159,8 @@ envs:
             location_id: "europe-west1-b"
             address: "10.154.165.0"
             memory_size_gb: "1"
-            redis_version: "rEDIS_5_0"
-          connect_mode: "PrIVATE_SErVICE_ACCESS"
+            redis_version: "REDIS_5_0"
+          connect_mode: "PRIVATE_SERVICE_ACCESS"
   us:
     region: &us-stg-region "us-east1"
     resources:
@@ -1348,7 +1352,7 @@ envs:
           inputs:
             name: "cloudon-stg-us-sql"
             random_instance_name: true
-            database_version: "POSTGrES_11"
+            database_version: "POSTGRES_11"
             deletion_protection: false
             availability_type: "REGIONAL"
             zone: "us-east1-b"
@@ -1384,8 +1388,8 @@ envs:
             location_id: "us-east1-b"
             address: "10.157.165.0"
             memory_size_gb: "1"
-            redis_version: "rEDIS_5_0"
-            connect_mode: "PrIVATE_SErVICE_ACCESS"
+            redis_version: "REDIS_5_0"
+            connect_mode: "PRIVATE_SERVICE_ACCESS"
 
   prod:
     us:
@@ -1425,7 +1429,7 @@ envs:
                 subnet_region: *us-prod-region
                 subnet_private_access: false
                 subnet_flow_logs: false
-                purpose: "INTErNAL_HTTPS_LOAD_BALANCEr"
+                purpose: "INTERNAL_HTTPS_LOAD_BALANCER"
                 role: "ACTIVE"
 
             secondary_ranges:
@@ -1468,6 +1472,9 @@ envs:
                 target_tags:
                   - "service-node-pool"
                 log_config: []
+
+        net-vpn:
+          inputs:
 
         net-vpc-attachments:
           inputs:
@@ -1606,7 +1613,7 @@ envs:
           inputs:
             name: "cloudon-prod-us-sql"
             random_instance_name: true
-            database_version: "POSTGrES_12"
+            database_version: "POSTGRES_12"
             deletion_protection: true
             availability_type: "REGIONAL"
             zone: "us-east1-a"
@@ -1643,7 +1650,7 @@ envs:
             address: "10.156.165.0"
             memory_size_gb: "1"
             redis_version: "REDIS_5_0"
-            connect_mode: "PrIVATE_SErVICE_ACCESS"
+            connect_mode: "PRIVATE_SERVICE_ACCESS"
     eu:
       region: &eu-prod-region "europe-west1"
       resources:
@@ -1681,7 +1688,7 @@ envs:
                 subnet_region: *eu-prod-region
                 subnet_private_access: false
                 subnet_flow_logs: false
-                purpose: "INTERNAL_HTTPS_LOAD_BALANCEr"
+                purpose: "INTERNAL_HTTPS_LOAD_BALANCER"
                 role: "ACTIVE"
 
             secondary_ranges:
@@ -1724,6 +1731,12 @@ envs:
                 target_tags:
                   - "service-node-pool"
                 log_config: []
+
+        net-vpn:
+          inputs:
+
+        net-glb:
+          inputs:
 
         net-vpc-attachments:
           inputs:
@@ -1857,7 +1870,7 @@ envs:
           inputs:
             name: "cloudon-prod-eu-sql"
             random_instance_name: true
-            database_version: "POSTGrES_12"
+            database_version: "POSTGRES_12"
             deletion_protection: true
             availability_type: "REGIONAL"
             zone: "europe-west1-a"

@@ -10,7 +10,6 @@ locals {
 }
 
 inputs =  {
-  project = dependency.gke_project.outputs.projects["service"].project_id
   folders_iam = {
     "${dependency.admin.outputs.folders["mgmt"].parent}" = {
       bindings = merge(local.resource_vars["inputs"]["folder"]["bindings"], {})
@@ -24,10 +23,6 @@ dependencies { paths = [
 
 dependency "admin" {
   config_path = "../admin"
-}
-
-dependency "gke_project" {
-  config_path = "../svc-projects"
 }
 
 include {

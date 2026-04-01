@@ -40,3 +40,12 @@ variable "export_peer_subnet_routes_with_public_ip" {
   default     = true
 }
 
+variable "peerings" {
+  description = "Map of peering configurations. Key = peering name."
+  type = map(object({
+    local_network = string
+    peer_network  = string
+  }))
+  default = {}
+}
+

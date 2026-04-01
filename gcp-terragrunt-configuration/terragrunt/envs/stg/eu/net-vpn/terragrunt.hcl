@@ -4,7 +4,7 @@ terraform {
 
 inputs = merge(local.resource_vars["inputs"], {
   project_id = dependency.net-vpc.outputs.project_id
-  region     = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["Region"]
+  region     = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["region"]
 })
 
 locals {
@@ -13,7 +13,7 @@ locals {
   folder        = basename(dirname(dirname(get_terragrunt_dir())))
   folder_id     = "${local.folder}/${local.environment}"
   resource      = basename(get_terragrunt_dir())
-  resource_vars = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["Resources"]["${local.resource}"]
+  resource_vars = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["resources"]["${local.resource}"]
 }
 
 dependency "net-vpc" {

@@ -8,7 +8,7 @@ locals {
   folder        = basename(dirname(dirname(get_terragrunt_dir())))
   folder_id     = "${local.folder}/${local.environment}"
   resource      = basename(get_terragrunt_dir())
-  resource_vars = local.common_vars["Environments"]["${local.folder}"]["${local.environment}"]["resources"]["${local.resource}"]
+  resource_vars = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["resources"]["${local.resource}"]
 }
 
 inputs = merge(local.resource_vars["inputs"], {

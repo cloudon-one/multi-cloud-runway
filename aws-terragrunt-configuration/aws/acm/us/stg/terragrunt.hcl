@@ -2,18 +2,15 @@ include "common" {
   path = find_in_parent_folders("common.hcl")
 }
 
-terraform {
-  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-acm?ref=dev"
+include "env" {
+  path   = find_in_parent_folders("_env.hcl")
+  expose = true
 }
 
-locals {
-  common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
-  environment   = basename(get_terragrunt_dir())
-  location      = basename(dirname(get_terragrunt_dir()))
-  resource      = basename(dirname(dirname(get_terragrunt_dir())))
-  resource_vars = local.common_vars["Environments"]["${local.location}-${local.environment}"]["Resources"]["${local.resource}"]
+terraform {
+  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-acm?ref=${include.env.locals.module_ref}"
 }
 
 inputs = {
-  certificates = local.resource_vars["inputs"]
+  certificates = include.env.locals.resource_vars["inputs"]
 }

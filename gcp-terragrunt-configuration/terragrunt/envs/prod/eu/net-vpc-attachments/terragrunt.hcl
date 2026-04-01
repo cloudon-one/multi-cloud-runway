@@ -40,7 +40,7 @@ inputs = {
     }
   }
   subnets_iam = {
-    "${dependency.net-vpc.outputs.subnets["$REGION/$SUBNET"].self_link}" = {
+    "${dependency.net-vpc.outputs.subnets["europe-west1/gke-subnet"].self_link}" = {
       bindings = {
         "roles/compute.networkUser" = [
           format("serviceAccount:service-%s@container-engine-robot.iam.gserviceaccount.com", dependency.service.outputs.projects["service"].project_number),

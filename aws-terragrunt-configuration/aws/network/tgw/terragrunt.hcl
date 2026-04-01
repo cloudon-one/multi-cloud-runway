@@ -2,6 +2,11 @@ include "common" {
   path = find_in_parent_folders("common.hcl")
 }
 
+include "version" {
+  path   = find_in_parent_folders("_module_version.hcl")
+  expose = true
+}
+
 dependency "vpc" {
   config_path = "../vpc"
   mock_outputs = {
@@ -24,7 +29,7 @@ dependency "us_prod_vpc" {
   }
 }
 dependency "us_stg_vpc" {
-  config_path = "../../vpc/us/dev"
+  config_path = "../../vpc/us/stg"
   mock_outputs = {
     vpc_id = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
@@ -47,7 +52,7 @@ dependency "eu_prod_vpc" {
 
 
 terraform {
-  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-tgw?ref=dev"
+  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-tgw?ref=${include.version.locals.module_ref}"
 }
 
 locals {

@@ -6,7 +6,7 @@ inputs = merge(local.resource_vars["inputs"], {
   project_id  = dependency.net-vpc.outputs.project_id
   svc_project = dependency.gke_project.outputs.projects["service"].project_id
   network     = dependency.net-vpc.outputs.network_self_link
-  subnetwork  = dependency.net-vpc.outputs.subnets["$REGION/$SUBNET"].self_link
+  subnetwork  = dependency.net-vpc.outputs.subnets["us-east1/gke-subnet"].self_link
 })
 
 locals {

@@ -2,8 +2,13 @@ include "common" {
   path = find_in_parent_folders("common.hcl")
 }
 
+include "version" {
+  path   = find_in_parent_folders("_module_version.hcl")
+  expose = true
+}
+
 terraform {
-  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-core-vpc?ref=dev"
+  source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-core-vpc?ref=${include.version.locals.module_ref}"
 }
 
 locals {

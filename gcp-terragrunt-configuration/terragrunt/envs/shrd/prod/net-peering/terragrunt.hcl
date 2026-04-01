@@ -3,12 +3,16 @@ terraform {
 }
 
 inputs = merge(local.resource_vars["inputs"], {
-
-  environment       = local.environment
-  host_project_name = dependency.net-vpc.outputs.project_id
-  local_network     = dependency.net-vpc.outputs.network_self_link
-  peer_network      = dependency.prod_us.outputs.network_self_link
-  peer_network      = dependency.prod_eu.outputs.network_self_link
+  peerings = {
+    "to-prod-us" = {
+      local_network = dependency.net-vpc.outputs.network_self_link
+      peer_network  = dependency.prod_us.outputs.network_self_link
+    }
+    "to-prod-eu" = {
+      local_network = dependency.net-vpc.outputs.network_self_link
+      peer_network  = dependency.prod_eu.outputs.network_self_link
+    }
+  }
 })
 
 locals {

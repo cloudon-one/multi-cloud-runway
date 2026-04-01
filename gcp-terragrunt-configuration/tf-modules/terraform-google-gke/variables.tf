@@ -51,7 +51,7 @@ variable "subnetwork" {
 variable "kubernetes_version" {
   type        = string
   description = "The Kubernetes version of the masters. If set to 'latest' it will pull latest available version in the selected region."
-  default     = "latest"
+  default     = null
 }
 
 variable "master_authorized_networks" {
