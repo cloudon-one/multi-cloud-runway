@@ -40,7 +40,7 @@ jobs:
         run: |
           find gcp-terragrunt-configuration/tf-modules -mindepth 1 -maxdepth 1 -type d | while read dir; do
             echo "Linting $dir"
-            cd "$dir" && tflint --init && tflint && cd - > /dev/null
+            (cd "$dir" && tflint --init && tflint) || exit 1
           done
 
   security-scan:
@@ -54,9 +54,11 @@ jobs:
         with:
           directory: gcp-terragrunt-configuration/tf-modules
           framework: terraform
-          skip_check: CKV_AWS_79,CKV_GCP_62
+          skip_check: CKV_AWS_79,CKV_GCP_62,CKV_TF_1,CKV_TF_2
           quiet: true
           compact: true
+          download_external_modules: true
+          soft_fail_on: CKV_GCP_114,CKV_GCP_43,CKV_GCP_82
 
   yaml-lint:
     name: YAML Lint

@@ -1,6 +1,7 @@
 # Contributing to Multi-Cloud Runway
 
-Thank you for your interest in contributing to the Multi-Cloud Runway infrastructure project! This document provides guidelines for contributing to this enterprise-grade multi-cloud landing zone implementation.
+Thank you for your interest in contributing to the Multi-Cloud Runway infrastructure project!
+This document provides guidelines for contributing to this enterprise-grade multi-cloud landing zone implementation.
 
 ## Table of Contents
 
@@ -93,7 +94,7 @@ Use descriptive branch names following this pattern:
 
 Follow conventional commit format:
 
-```
+```text
 type(scope): brief description
 
 Detailed explanation of changes (if needed)
@@ -116,7 +117,7 @@ Closes #123
 
 **Examples:**
 
-```
+```text
 feat(aws): add GuardDuty configuration for security monitoring
 
 - Enable GuardDuty in all AWS regions
@@ -165,7 +166,7 @@ Closes #456
 
 ### File Organization
 
-```
+```text
 service-name/
 ├── README.md                 # Service-specific documentation
 ├── region/
@@ -419,4 +420,5 @@ Contributors will be recognized in the following ways:
 - Invited to join the core maintainer team for sustained contributions
 - Recognition in team communications for outstanding work
 
-Thank you for contributing to Multi-Cloud Runway! Your efforts help maintain a secure, scalable, and compliant multi-cloud infrastructure platform.
+Thank you for contributing to Multi-Cloud Runway!
+Your efforts help maintain a secure, scalable, and compliant multi-cloud infrastructure platform.

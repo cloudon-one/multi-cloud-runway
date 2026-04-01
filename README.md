@@ -6,7 +6,8 @@
 [![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue.svg)](./.github/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Enterprise-grade, security-hardened multi-cloud landing zone using Terragrunt and Terraform. Supports **AWS** and **GCP** with compliance frameworks including PCI DSS, CIS Benchmarks, and SOC 2.
+Enterprise-grade, security-hardened multi-cloud landing zone using Terragrunt and Terraform.
+Supports **AWS** and **GCP** with compliance frameworks including PCI DSS, CIS Benchmarks, and SOC 2.
 
 ---
 
@@ -217,7 +218,8 @@ cd gcp-terragrunt-configuration/terragrunt/envs/prod/us/svc-gke && terragrunt pl
 | Prod EU | 10.155.0.0/16 | europe-west1 | 10.155.0.0/17 | 10.155.144.0/20 |
 | Prod US | 10.156.0.0/16 | us-east1 | 10.156.0.0/17 | 10.156.144.0/20 |
 
-GCP uses **Shared VPC** (host/service project model), **VPC Peering** between shared and environment VPCs, **Cloud NAT** for outbound, and **Cloud DNS** for resolution.
+GCP uses **Shared VPC** (host/service project model), **VPC Peering** between shared and environment VPCs,
+**Cloud NAT** for outbound, and **Cloud DNS** for resolution.
 
 ---
 
@@ -264,7 +266,8 @@ GitHub Actions workflow (`.github/workflows/validate.yml`) runs on every PR and 
 
 ### Pre-commit Hooks
 
-Locally enforced via `.pre-commit-config.yaml`: terraform_fmt, terraform_validate, terraform_docs, tflint, detect-secrets, checkov, yamllint, markdownlint, conventional commits, terragrunt fmt/validate, security policy checks.
+Locally enforced via `.pre-commit-config.yaml`: terraform_fmt, terraform_validate, terraform_docs, tflint,
+detect-secrets, checkov, yamllint, markdownlint, conventional commits, terragrunt fmt/validate, security policy checks.
 
 ---
 
@@ -277,8 +280,10 @@ All environment configuration is centralized in `vars.yaml` files:
 
 ### Module Version Management
 
-- **AWS:** Module version centralized in `_env.hcl` and `_module_version.hcl` (single `module_ref` variable). Change version in 2 files to update all 66 module references.
-- **GCP:** Upstream module versions hardcoded per module (Terraform limitation). Audit with `./scripts/check-module-versions.sh`.
+- **AWS:** Module version centralized in `_env.hcl` and `_module_version.hcl` (single `module_ref` variable).
+  Change version in 2 files to update all 66 module references.
+- **GCP:** Upstream module versions hardcoded per module (Terraform limitation).
+  Audit with `./scripts/check-module-versions.sh`.
 
 ### State Management
 

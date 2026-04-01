@@ -36,12 +36,16 @@ module "vpn" {
   peer_ips           = var.peer_ips
   peer_asn           = var.peer_asn
 
-  route_priority           = var.route_priority
-  remote_subnet            = var.remote_subnet
-  cr_name                  = var.cr_enabled ? google_compute_router.this[0].name : null
-  cr_enabled               = var.cr_enabled
-  bgp_cr_session_range     = var.bgp_cr_session_range
-  bgp_remote_session_range = var.bgp_remote_session_range
-  vpn_gw_ip                = var.vpn_gw_ip
+  route_priority             = var.route_priority
+  remote_subnet              = var.remote_subnet
+  local_traffic_selector     = var.local_traffic_selector
+  remote_traffic_selector    = var.remote_traffic_selector
+  cr_name                    = var.cr_enabled ? google_compute_router.this[0].name : var.cr_name
+  cr_enabled                 = var.cr_enabled
+  bgp_cr_session_range       = var.bgp_cr_session_range
+  bgp_remote_session_range   = var.bgp_remote_session_range
+  ike_version                = var.ike_version
+  advertised_route_priority  = var.advertised_route_priority
+  vpn_gw_ip                  = var.vpn_gw_ip
 
 }
