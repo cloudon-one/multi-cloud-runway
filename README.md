@@ -1,443 +1,319 @@
 # Multi-Cloud Landing Zone Infrastructure
 
 [![Security Status](https://img.shields.io/badge/security-hardened-green.svg)](./SECURITY.md)
-[![Compliance](https://img.shields.io/badge/compliance-PCI%20DSS%20%7C%20CIS-blue.svg)](./docs/compliance.md)
+[![Compliance](https://img.shields.io/badge/compliance-PCI%20DSS%20%7C%20CIS-blue.svg)](./SECURITY.md)
 [![Infrastructure](https://img.shields.io/badge/infrastructure-multi--cloud-purple.svg)](./README.md)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue.svg)](./.github/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Enterprise-grade, security-hardened multi-cloud landing zone implementation using Terragrunt and Terraform. Supports AWS and GCP with comprehensive compliance frameworks including PCI DSS, CIS Benchmarks, and SOC 2.
-
-## 🚀 Quick Start
-
-```bash
-# Clone repository
-git clone https://github.com/cloudon-one/multi-cloud-runway.git
-cd multi-cloud-runway
-
-# Install prerequisites
-make verify-setup
-
-# Initialize infrastructure
-make init
-
-# Deploy development environment
-make dev-plan
-make dev-apply
-```
-
-## 🎯 Solutions Overview
-
-```mermaid
-graph TB
-    subgraph CloudPlatforms["Cloud Platforms"]
-        AWS["AWS Landing Zone"]
-        GCP["GCP Landing Zone"]
-    end
-    
-    subgraph Solutions["Infrastructure Solutions"]
-        Network["Network & Connectivity"]
-        Security["Security & Compliance"]
-        Computing["Computing & Containers"]
-        Data["Data & Storage"]
-        IAM["Identity & Access"]
-    end
-    
-    subgraph Components["Platform Components"]
-        Network --> VPC["VPC/VNet"]
-        Network --> TGW["Transit Gateway"]
-        Network --> VPN["VPN Connections"]
-        
-        Security --> GuardDuty["Security Monitoring"]
-        Security --> CloudTrail["Audit Logging"]
-        Security --> Encryption["Data Encryption"]
-        
-        Computing --> EKS["Kubernetes (EKS/GKE)"]
-        Computing --> EC2["Compute Instances"]
-        Computing --> Serverless["Serverless Services"]
-        
-        Data --> RDS["Managed Databases"]
-        Data --> S3["Object Storage"]
-        Data --> Redis["Caching Layer"]
-        
-        IAM --> Roles["IAM Roles"]
-        IAM --> Groups["Identity Groups"]
-        IAM --> Policies["Access Policies"]
-    end
-    
-    subgraph Benefits["Business Outcomes"]
-        Security --> Compliance["Regulatory Compliance"]
-        Security --> DataProt["Data Protection"]
-        Network --> Reliability["High Availability"]
-        Network --> Perf["Performance"]
-        Computing --> Scalability["Auto Scaling"]
-        Computing --> Efficiency["Cost Optimization"]
-        Data --> Durability["Data Durability"]
-        IAM --> Access["Secure Access"]
-    end
-
-    AWS --> Solutions
-    GCP --> Solutions
-
-    classDef platforms fill:#e8f4ea,stroke:#333,stroke-width:2px;
-    classDef solutions fill:#e6f3ff,stroke:#333,stroke-width:2px;
-    classDef components fill:#fff3e6,stroke:#333,stroke-width:2px;
-    classDef benefits fill:#f9e6ff,stroke:#333,stroke-width:2px;
-    
-    class AWS,GCP platforms;
-    class Network,Security,Computing,Data,IAM solutions;
-    class VPC,TGW,EKS,RDS,Roles components;
-    class Compliance,Reliability,Scalability,Durability,Access benefits;
-```
-
-## 🏗️ Architecture Overview
-
-### AWS Landing Zone Structure
-
-- **Management OU**: Organization management, IAM, and billing
-- **Network Account**: Core networking (VPCs, Transit Gateway, VPN)
-- **Shared-Services Account**: Common services and EKS clusters
-- **Security OU**: GuardDuty, Config, CloudTrail
-- **Production OU**: US and EU production environments
-- **Development OU**: Development and staging environments
-
-### GCP Landing Zone Structure
-
-- **Root**
-  - admin
-  - shrd (Shared environment)
-    - prod
-    - dev
-  - prod (Production)
-    - eu
-    - us
-  - dev (Development)
-    - eu
-  - stg (Staging)
-    - eu
-    - us
-
-## 📁 Repository Structure
-
-```
-.
-├── aws/
-│   ├── accounts/
-│   ├── network/
-│   ├── security/
-│   └── services/
-├── gcp/
-│   ├── envs/
-│   │   ├── global/
-│   │   ├── shrd/
-│   │   ├── dev/
-│   │   ├── stg/
-│   │   └── prod/
-│   └── modules/
-└── common/
-    ├── terragrunt.hcl
-    └── vars.yaml
-```
-
-## 🚀 Prerequisites
-
-### Tools
-
-- Terragrunt >= v0.70.0
-- Terraform >= v1.5.0
-- AWS CLI configured
-- GCP SDK installed
-- kubectl configured
-- Helm v3.x
-
-### Cloud Provider Setup
-
-1. AWS Account Setup:
-   ```bash
-   aws configure
-   ```
-
-2. GCP Project Setup:
-
-   ```bash
-   gcloud auth application-default login
-   ```
-
-## 🔑 Network Architecture
-
-### AWS VPC Configuration
-
-- Transit Gateway for inter-VPC connectivity
-- Direct Connect for on-premises integration
-- VPC endpoints for AWS services
-
-### GCP VPC Configuration
-
-Each environment has dedicated VPCs:
-
-- Shared Dev VPC: 10.151.0.0/16
-- Shared Prod VPC: 10.152.0.0/16
-- Dev EU VPC: 10.153.0.0/16
-- Staging EU VPC: 10.154.0.0/16
-- Prod EU VPC: 10.155.0.0/16
-
-## 🔒 Security & Compliance
-
-### Compliance Standards
-
-- **PCI DSS**: Payment Card Industry Data Security Standard
-- **CIS Benchmarks**: Center for Internet Security configuration standards
-- **SOC 2 Type II**: System and Organization Controls
-- **ISO 27001**: Information Security Management
-- **NIST Framework**: Cybersecurity Framework
-
-### Security Features
-
-#### Multi-Layer Security
-
-- **Network Isolation**: Private subnets, VPC segmentation, firewall rules
-- **Encryption**: At-rest and in-transit encryption using cloud-native KMS
-- **Identity Management**: Role-based access, Workload Identity, MFA enforcement
-- **Monitoring**: Real-time security monitoring, audit logging, threat detection
-
-#### Security Tools
-
-- **AWS**: GuardDuty, CloudTrail, Config, Security Hub, WAF
-- **GCP**: Security Command Center, Cloud Armor, Binary Authorization
-- **Third-party**: Automated security scanning with tfsec, checkov
-
-### Security Validation
-
-```bash
-# Run security validation
-make security
-
-# Run compliance checks
-python3 scripts/compliance-check.py --framework "PCI DSS"
-
-# Validate security policies
-python3 scripts/validate-security-policies.py
-```
-
-## 📊 Kubernetes Infrastructure
-
-### AWS EKS
-
-- Managed node groups
-- Fargate profiles
-- ALB integration
-
-### GCP GKE
-
-- Private clusters
-- Multiple node pools:
-  - Service node pool
-  - CI pool
-  - consul-vault pool (prod)
-- Workload Identity enabled
-
-## 🔧 Database Infrastructure
-
-### AWS Databases
-
-- Amazon RDS
-- Aurora clusters
-- DynamoDB tables
-- ElastiCache Redis
-
-### GCP Databases
-
-- Cloud SQL (PostgreSQL):
-  - Development: PostgreSQL 11
-  - Production: PostgreSQL 12
-- Cloud Memorystore (Redis):
-  - Memory size: 1GB
-  - Redis 5.0
-
-## 🛠️ Development & Operations
-
-### Available Commands
-
-```bash
-# Infrastructure Management
-make init              # Initialize all configurations
-make validate          # Validate configurations
-make plan             # Generate deployment plans
-make security         # Run security scans
-make cost             # Generate cost estimates
-make docs             # Generate documentation
-
-# Environment-Specific
-make dev-plan         # Plan development environment
-make staging-plan     # Plan staging environment  
-make prod-plan        # Plan production environment
-
-# Maintenance
-make clean            # Clean temporary files
-make health-check     # Check infrastructure health
-make backup-state     # Backup Terraform state
-```
-
-### Pre-commit Hooks
-
-Automated quality gates ensure code quality:
-
-- **Security Scanning**: detect-secrets, checkov, tfsec
-- **Code Quality**: terraform fmt, terragrunt validate
-- **Documentation**: terraform-docs, markdownlint
-- **Compliance**: Custom security policy validation
-
-### CI/CD Integration
-
-The repository includes automated pipelines for:
-
-- Infrastructure validation and security scanning
-- Compliance checks against multiple frameworks
-- Cost impact analysis
-- Documentation generation
-
-## 📝 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
-
-### Quick Contribution Steps
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Quality
-
-All contributions must pass:
-
-- ✅ Security validation
-- ✅ Compliance checks  
-- ✅ Terraform validation
-- ✅ Documentation updates
-- ✅ Peer review
-
-## 🔧 Operations & Maintenance
-
-### Monitoring & Observability
-
-- **Infrastructure Monitoring**: CloudWatch, Cloud Monitoring
-- **Security Monitoring**: GuardDuty, Security Command Center
-- **Cost Monitoring**: Budget alerts, cost anomaly detection
-- **Performance**: Application and infrastructure metrics
-
-### Disaster Recovery
-
-- **Multi-region deployment** with automated failover
-- **Cross-region backup replication** for critical data
-- **Infrastructure as Code** enables rapid environment recreation
-- **Documented recovery procedures** with tested runbooks
-
-### State Management
-
-**AWS**: S3 backend with DynamoDB locking
-
-```bash
-# Backup state
-make backup-state
-
-# View state
-terragrunt state list
-terragrunt state show <resource>
-```
-
-**GCP**: GCS backend with regional distribution
-
-- Automatic versioning and encryption
-- Cross-region replication for reliability
-- State locking with Cloud Storage
-
-### Regular Maintenance Tasks
-
-- **Weekly**: Security reviews, cost optimization, performance analysis
-- **Monthly**: Access certification, patch management, capacity planning  
-- **Quarterly**: Compliance audits, disaster recovery testing
-- **Annually**: Architecture reviews, third-party security assessments
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### Third-Party Components
-
-This project uses various open-source components. See individual component licenses for details:
-
-- Terraform (MPL 2.0)
-- Terragrunt (MIT)
-- Cloud provider CLIs (respective licenses)
-
-### Attribution
-
-Developed by [CloudOn.One](https://cloudon.work) - Multi-cloud infrastructure specialists.
-
-## 📚 Documentation
-
-### Essential Reading
-
-- **[SECURITY.md](SECURITY.md)**: Security policies and procedures
-- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Contribution guidelines and standards
-- **[CLAUDE.md](CLAUDE.md)**: AI-assisted development guidance
-- **[AWS README](aws-terragrunt-configuration/README.md)**: AWS-specific documentation
-- **[GCP README](gcp-terragrunt-configuration/README.md)**: GCP-specific documentation
-
-### Architecture Documentation
-
-- **Network Architecture**: VPC design, connectivity patterns, security zones
-- **Security Architecture**: Defense-in-depth strategy, compliance frameworks
-- **Data Architecture**: Storage patterns, backup strategies, encryption
-- **Operational Procedures**: Deployment, monitoring, incident response
-
-## 🎯 Roadmap
-
-### Current Focus
-
-- ✅ Multi-cloud landing zone implementation
-- ✅ Security hardening and compliance
-- ✅ Automated validation and testing
-- ✅ Comprehensive documentation
-
-### Upcoming Features
-
-- 🔄 Service mesh integration (Istio/Linkerd)
-- 🔄 GitOps workflow implementation
-- 🔄 Advanced monitoring and observability
-- 🔄 Additional cloud provider support
-
-### Future Enhancements
-
-- 📋 Cost optimization automation
-- 📋 Policy as Code framework
-- 📋 Multi-cluster service management
-- 📋 Advanced disaster recovery automation
-
-## 🤝 Support & Community
-
-### Getting Help
-
-- **📝 Issues**: [GitHub Issues](https://github.com/cloudon-one/multi-cloud-runway/issues) for bugs and feature requests
-- **💬 Discussions**: [GitHub Discussions](https://github.com/cloudon-one/multi-cloud-runway/discussions) for questions and ideas
-- **📧 Security**: <security@cloudon-one.com> for security-related issues
-- **📖 Documentation**: Comprehensive docs in each platform directory
-
-### Support Channels
-
-- **Community Support**: GitHub Issues and Discussions
-- **Enterprise Support**: Available for production deployments
-- **Professional Services**: Architecture review and implementation assistance
-- **Training**: Multi-cloud infrastructure workshops and certification
-
-### Response Times
-
-- **Critical Security Issues**: Within 24 hours
-- **Bug Reports**: Within 2-3 business days
-- **Feature Requests**: Reviewed weekly
-- **General Questions**: Within 1 week
+Enterprise-grade, security-hardened multi-cloud landing zone using Terragrunt and Terraform. Supports **AWS** and **GCP** with compliance frameworks including PCI DSS, CIS Benchmarks, and SOC 2.
 
 ---
 
-**⭐ If this project helped you, please give it a star! It helps others discover this resource.**
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+- [Repository Structure](#repository-structure)
+- [Prerequisites](#prerequisites)
+- [Available Commands](#available-commands)
+- [Network Architecture](#network-architecture)
+- [Security and Compliance](#security-and-compliance)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Configuration Management](#configuration-management)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/cloudon-one/multi-cloud-runway.git
+cd multi-cloud-runway
+
+make verify-setup        # Check prerequisites
+make init                # Initialize AWS + GCP
+make dev-plan            # Plan dev environment
+```
+
+---
+
+## Architecture
+
+```mermaid
+graph LR
+    subgraph AWS["AWS Landing Zone"]
+        A1[VPC / TGW / VPN]
+        A2[EKS / EC2]
+        A3[RDS / Aurora / DynamoDB / Redis]
+        A4[CloudTrail / GuardDuty / SCP]
+    end
+
+    subgraph GCP["GCP Landing Zone"]
+        G1[Shared VPC / Cloud NAT / DNS]
+        G2[GKE / Workload Identity]
+        G3[Cloud SQL / Memorystore]
+        G4[Audit Logging / IAM / KMS]
+    end
+
+    TG[Terragrunt] --> AWS
+    TG --> GCP
+```
+
+### AWS Landing Zone
+
+| Layer | Components |
+|-------|-----------|
+| **Organization** | Multi-account structure with OUs (Management, Security, Network, Production, Development) |
+| **Networking** | VPCs per region/env, Transit Gateway, Site-to-Site VPN |
+| **Compute** | EKS clusters, EC2 instances with ASG |
+| **Data** | RDS, Aurora, DynamoDB, ElastiCache Redis, S3 |
+| **Security** | CloudTrail, GuardDuty, SCPs, IAM roles/groups/policies |
+| **Regions** | US (us-east-2), EU (eu-west-2) |
+
+### GCP Landing Zone
+
+| Layer | Components |
+|-------|-----------|
+| **Organization** | Folder hierarchy (admin, shrd, dev, stg, prod) with Shared VPC |
+| **Networking** | Shared VPC host/service projects, Cloud NAT, Cloud DNS, VPC Peering, VPN |
+| **Compute** | Private GKE clusters with Workload Identity, multiple node pools |
+| **Data** | Cloud SQL (PostgreSQL), Cloud Memorystore (Redis) |
+| **Security** | Cloud KMS, IAM permissions, audit logging, firewall rules |
+| **Regions** | US (us-east1), EU (europe-west1) |
+
+---
+
+## Repository Structure
+
+```text
+.
+├── aws-terragrunt-configuration/
+│   └── aws/
+│       ├── _env.hcl                  # Shared locals for env-pattern configs
+│       ├── _module_version.hcl       # Centralized module version (v1.0.0)
+│       ├── common.hcl               # Root config: S3 backend, provider, default_tags
+│       ├── vars.yaml                # All environment configurations
+│       ├── {service}/{region}/{env}/ # Service deployments (vpc, eks, rds, etc.)
+│       ├── accounts/                # AWS Organization accounts
+│       ├── network/                 # Core networking (VPC, TGW)
+│       ├── security/               # SCPs, EventBridge, security SNS
+│       └── iam/                    # IAM roles, groups, policies, users
+├── gcp-terragrunt-configuration/
+│   ├── terragrunt/
+│   │   ├── terragrunt.hcl          # Root config: GCS backend
+│   │   ├── vars.yaml               # All environment configurations
+│   │   └── envs/                   # Environment deployments
+│   │       ├── global/             # Admin, audit, IAM, DNS
+│   │       ├── shrd/{dev,prod}/    # Shared services
+│   │       ├── dev/eu/             # Development
+│   │       ├── stg/{eu,us}/        # Staging
+│   │       └── prod/{eu,us}/       # Production
+│   └── tf-modules/                 # Local Terraform modules (14 modules)
+├── scripts/                        # Validation and audit scripts
+├── .github/workflows/              # CI/CD pipeline
+└── Makefile                        # Infrastructure management commands
+```
+
+### Key Design Patterns
+
+| Pattern | AWS | GCP |
+|---------|-----|-----|
+| **Module Source** | External Git repo with centralized version ref | Local `tf-modules/` directory |
+| **State Backend** | S3 + DynamoDB locking | GCS |
+| **Config Structure** | `{service}/{region}/{env}/terragrunt.hcl` | `{env}/{region}/{resource}/terragrunt.hcl` |
+| **Shared Locals** | `_env.hcl` (55 files), `_module_version.hcl` | Root `terragrunt.hcl` with `include` |
+| **Variable Source** | `vars.yaml` with `Environments.{loc}-{env}.Resources` | `vars.yaml` with `envs.{folder}.{env}.resources` |
+| **Provider Region** | Auto-selects us-east-2 or eu-west-2 by path | Per-environment in vars.yaml |
+| **Default Tags** | Injected via provider `default_tags` | Per-module labels |
+
+---
+
+## Prerequisites
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| Terragrunt | >= 1.0.0 | Infrastructure orchestration |
+| Terraform / OpenTofu | >= 1.5.0 | Infrastructure provisioning |
+| AWS CLI | >= 2.0 | AWS authentication |
+| Google Cloud SDK | Latest | GCP authentication |
+| pre-commit | Latest | Git hooks |
+
+**Optional:** tfsec, checkov, tflint, infracost, terraform-docs
+
+```bash
+# AWS setup
+aws configure
+
+# GCP setup
+gcloud auth application-default login
+```
+
+---
+
+## Available Commands
+
+```bash
+# Full workflow
+make all                 # init + validate + security + lint + fmt + plan
+
+# Per-cloud operations
+make aws-init            # Initialize AWS configs
+make aws-validate        # Validate AWS configs
+make aws-plan            # Plan AWS changes
+make aws-apply           # Apply AWS changes
+make gcp-init            # Initialize GCP configs
+make gcp-validate        # Validate GCP configs
+make gcp-plan            # Plan GCP changes
+make gcp-apply           # Apply GCP changes
+
+# Per-environment
+make dev-plan            # Plan dev environment
+make staging-plan        # Plan staging environment
+make prod-plan           # Plan production environment
+
+# Quality & security
+make fmt                 # Format HCL/TF files
+make lint                # Run tflint
+make security            # Run tfsec + checkov
+make pre-commit          # Run all pre-commit hooks
+
+# Operations
+make health-check        # Verify cloud credentials
+make clean               # Remove caches and temp files
+make backup-state        # Backup Terraform state files
+make cost                # Generate cost estimates (requires infracost)
+
+# Single service (navigate to directory)
+cd aws-terragrunt-configuration/aws/eks/us/prod && terragrunt plan
+cd gcp-terragrunt-configuration/terragrunt/envs/prod/us/svc-gke && terragrunt plan
+
+# Audit GCP module versions
+./scripts/check-module-versions.sh
+```
+
+---
+
+## Network Architecture
+
+### AWS
+
+| Component | Details |
+|-----------|---------|
+| Transit Gateway | Centralized hub connecting all VPCs (US + EU) |
+| VPN | Site-to-Site VPN per region/environment |
+| VPC Endpoints | Private access to AWS services |
+| Provider Regions | `us-east-2` for US, `eu-west-2` for EU (auto-selected by path) |
+
+### GCP
+
+| Environment | VPC CIDR | Region | GKE Pods | GKE Services |
+|-------------|----------|--------|----------|---------------|
+| Shared Dev | 10.151.0.0/16 | europe-west1 | 10.151.0.0/17 | 10.151.144.0/20 |
+| Shared Prod | 10.152.0.0/16 | us-east1 | 10.152.0.0/17 | 10.152.144.0/20 |
+| Dev EU | 10.153.0.0/16 | europe-west1 | 10.153.0.0/17 | 10.153.144.0/20 |
+| Staging EU | 10.154.0.0/16 | europe-west1 | 10.154.0.0/17 | 10.154.144.0/20 |
+| Prod EU | 10.155.0.0/16 | europe-west1 | 10.155.0.0/17 | 10.155.144.0/20 |
+| Prod US | 10.156.0.0/16 | us-east1 | 10.156.0.0/17 | 10.156.144.0/20 |
+
+GCP uses **Shared VPC** (host/service project model), **VPC Peering** between shared and environment VPCs, **Cloud NAT** for outbound, and **Cloud DNS** for resolution.
+
+---
+
+## Security and Compliance
+
+### Compliance Frameworks
+
+PCI DSS | CIS Benchmarks | SOC 2 Type II | ISO 27001 | NIST Framework
+
+### Security Controls
+
+| Control | AWS | GCP |
+|---------|-----|-----|
+| **Network Isolation** | Private subnets, NACLs, SGs | Private GKE, VPC Service Controls |
+| **Encryption at Rest** | KMS with auto-rotation | Cloud KMS, CMEK |
+| **Encryption in Transit** | TLS 1.2+, ACM certificates | Managed SSL, TLS 1.2+ |
+| **Identity** | IAM roles, MFA, cross-account | Workload Identity, groups-based IAM |
+| **Audit** | CloudTrail, Config, GuardDuty | Audit logging, Security Command Center |
+| **Policy** | SCPs, Config Rules | Organization policies, firewall rules |
+| **State Protection** | S3 encryption + DynamoDB locking | GCS encryption + versioning |
+
+### Validation Commands
+
+```bash
+make security                                              # tfsec + checkov
+python3 scripts/compliance-check.py --framework "PCI DSS"  # Compliance audit
+python3 scripts/validate-security-policies.py              # Policy validation
+```
+
+---
+
+## CI/CD Pipeline
+
+GitHub Actions workflow (`.github/workflows/validate.yml`) runs on every PR and push to `main`:
+
+| Job | Tool | Scope |
+|-----|------|-------|
+| terraform-fmt | `terraform fmt` | All `.tf` files |
+| tflint | TFLint | GCP tf-modules |
+| security-scan | Checkov | Terraform security analysis |
+| yaml-lint | yamllint | All YAML files |
+| markdown-lint | markdownlint | All Markdown files |
+| detect-secrets | detect-secrets | Secret leak prevention |
+
+### Pre-commit Hooks
+
+Locally enforced via `.pre-commit-config.yaml`: terraform_fmt, terraform_validate, terraform_docs, tflint, detect-secrets, checkov, yamllint, markdownlint, conventional commits, terragrunt fmt/validate, security policy checks.
+
+---
+
+## Configuration Management
+
+All environment configuration is centralized in `vars.yaml` files:
+
+- **AWS:** `aws-terragrunt-configuration/aws/vars.yaml` — uses `Environments.{region}-{env}.Resources.{service}`
+- **GCP:** `gcp-terragrunt-configuration/terragrunt/vars.yaml` — uses `envs.{folder}.{env}.resources.{service}`
+
+### Module Version Management
+
+- **AWS:** Module version centralized in `_env.hcl` and `_module_version.hcl` (single `module_ref` variable). Change version in 2 files to update all 66 module references.
+- **GCP:** Upstream module versions hardcoded per module (Terraform limitation). Audit with `./scripts/check-module-versions.sh`.
+
+### State Management
+
+| | AWS | GCP |
+|---|-----|-----|
+| **Backend** | S3 | GCS |
+| **Locking** | DynamoDB | GCS native |
+| **Encryption** | AES-256 | Google-managed |
+| **Key Pattern** | `{service}/{region}/{env}/terraform.tfstate` | `{path_relative_to_include}` |
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
+
+**Branch naming:** `feature/*`, `fix/*`, `docs/*`, `refactor/*`, `compliance/*`
+
+**Commit format:** Conventional commits — `type(scope): description`
+
+Types: `feat`, `fix`, `docs`, `refactor`, `test`, `sec`, `compliance`, `build`, `chore`, `ci`, `perf`, `revert`, `style`
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+Developed by [CloudOn.One](https://cloudon-one.com)
+
+### Documentation
+
+| Document | Description |
+|----------|-------------|
+| [SECURITY.md](SECURITY.md) | Security policies and incident response |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines |
+| [AWS README](aws-terragrunt-configuration/README.md) | AWS-specific documentation |
+| [GCP README](gcp-terragrunt-configuration/README.md) | GCP-specific documentation |
