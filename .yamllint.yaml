@@ -30,7 +30,7 @@ rules:
     min-spaces-from-content: 1
     
   # Key duplicates
-  key-duplicates: error
+  key-duplicates: enable
   
   # Brackets and braces
   brackets:

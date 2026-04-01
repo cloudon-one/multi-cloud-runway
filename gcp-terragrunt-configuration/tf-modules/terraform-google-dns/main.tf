@@ -20,7 +20,3 @@ module "dns" {
   recordsets = var.recordsets
 }
 
-locals {
-  is_static_zone = var.type == "public" || var.type == "private"
-}
-
