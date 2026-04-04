@@ -140,23 +140,43 @@ envs:
             - name: "eu.dev.cloudon-one.com"
               type: "NS"
               ttl: 300
-              records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
+              records:
+                - "ns-cloud-e1.googledomains.com."
+                - "ns-cloud-e2.googledomains.com."
+                - "ns-cloud-e3.googledomains.com."
+                - "ns-cloud-e4.googledomains.com."
             - name: "eu.prod.cloudon-one.com"
               type: "NS"
               ttl: 300
-              records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
+              records:
+                - "ns-cloud-d1.googledomains.com."
+                - "ns-cloud-d2.googledomains.com."
+                - "ns-cloud-d3.googledomains.com."
+                - "ns-cloud-d4.googledomains.com."
             - name: "eu.stg.cloudon-one.com"
               type: "NS"
               ttl: 300
-              records: ["ns-cloud-d1.googledomains.com.", "ns-cloud-d2.googledomains.com.", "ns-cloud-d3.googledomains.com.", "ns-cloud-d4.googledomains.com."]
+              records:
+                - "ns-cloud-d1.googledomains.com."
+                - "ns-cloud-d2.googledomains.com."
+                - "ns-cloud-d3.googledomains.com."
+                - "ns-cloud-d4.googledomains.com."
             - name: "us.prod.cloudon-one.com"
               type: "NS"
               ttl: 300
-              records: ["ns-cloud-a1.googledomains.com.", "ns-cloud-a2.googledomains.com.", "ns-cloud-a3.googledomains.com.", "ns-cloud-a4.googledomains.com."]
+              records:
+                - "ns-cloud-a1.googledomains.com."
+                - "ns-cloud-a2.googledomains.com."
+                - "ns-cloud-a3.googledomains.com."
+                - "ns-cloud-a4.googledomains.com."
             - name: "us.stg.cloudon-one.com"
               type: "NS"
               ttl: 300
-              records: ["ns-cloud-e1.googledomains.com.", "ns-cloud-e2.googledomains.com.", "ns-cloud-e3.googledomains.com.", "ns-cloud-e4.googledomains.com."]
+              records:
+                - "ns-cloud-e1.googledomains.com."
+                - "ns-cloud-e2.googledomains.com."
+                - "ns-cloud-e3.googledomains.com."
+                - "ns-cloud-e4.googledomains.com."
 
   shrd:
     dev:
@@ -485,7 +505,7 @@ envs:
             peer_ips:
               - "" # client vpn gw IP
             remote_subnet:
-              - "192.168.1.0/24" 
+              - "192.168.1.0/24"
               - "192.168.2.0/24"
             route_priority: 99
             tunnel_count: 1
@@ -536,15 +556,15 @@ envs:
         svc-iam-permissions:
           inputs:
             workload_identity_iam:
-              #vault-sa:
-              #  k8s_sa_name: vault
-              #  namespace: vault
-              #  project: *shrd-prod-svc-project
-              #  roles:
-              #    - roles/cloudkms.cryptoKeyEncrypterDecrypter
-              #consul-sa:
-              #  k8s_sa_name: consul
-              #  namespace: consul
+              # vault-sa:
+              #   k8s_sa_name: vault
+              #   namespace: vault
+              #   project: *shrd-prod-svc-project
+              #   roles:
+              #     - roles/cloudkms.cryptoKeyEncrypterDecrypter
+              # consul-sa:
+              #   k8s_sa_name: consul
+              #   namespace: consul
               #  project: *shrd-prod-svc-project
               #  roles: []
               ci-runner:
@@ -1164,232 +1184,232 @@ envs:
   us:
     region: &us-stg-region "us-east1"
     resources:
-        net-vpc:
-          inputs:
-            billing_account: *billing_account
-            domain: *domain
-            host_project_name: "cloudon-stg-us-host"
-            network_name: "cloudon-vpc-eu-stg"
-            active_apis:
-              - "compute.googleapis.com"
-              - "logging.googleapis.com"
-              - "container.googleapis.com"
-              - "networkmanagement.googleapis.com"
-              - "servicenetworking.googleapis.com"
-              - "serviceusage.googleapis.com"
-              - "dns.googleapis.com"
+      net-vpc:
+        inputs:
+          billing_account: *billing_account
+          domain: *domain
+          host_project_name: "cloudon-stg-us-host"
+          network_name: "cloudon-vpc-eu-stg"
+          active_apis:
+            - "compute.googleapis.com"
+            - "logging.googleapis.com"
+            - "container.googleapis.com"
+            - "networkmanagement.googleapis.com"
+            - "servicenetworking.googleapis.com"
+            - "serviceusage.googleapis.com"
+            - "dns.googleapis.com"
 
-            subnets:
-              - subnet_name: "gke-subnet"
-                subnet_ip: "10.157.128.0/20"
-                subnet_region: *us-stg-region
-                subnet_private_access: true
-                subnet_flow_logs: true
+          subnets:
+            - subnet_name: "gke-subnet"
+              subnet_ip: "10.157.128.0/20"
+              subnet_region: *us-stg-region
+              subnet_private_access: true
+              subnet_flow_logs: true
 
-              - subnet_name: "general-subnet"
-                subnet_ip: "10.157.161.0/24"
-                subnet_region: *us-stg-region
-                subnet_private_access: true
-                subnet_flow_logs: true
+            - subnet_name: "general-subnet"
+              subnet_ip: "10.157.161.0/24"
+              subnet_region: *us-stg-region
+              subnet_private_access: true
+              subnet_flow_logs: true
 
-            secondary_ranges:
-              gke-subnet:
-                - range_name: "pods"
-                  ip_cidr_range: "10.157.0.0/17"
-                - range_name: "services"
-                  ip_cidr_range: "10.157.144.0/20"
-            cloud_nats:
-              us-east1:
-                router_name: "cloudon-router-us-stg"
-                router_asn: "64514"
-                source_subnetwork_ip_ranges_to_nat: "ALL_SUBNETWORKS_ALL_IP_RANGES"
-                log_config_enable: true
-                log_config_filter: "ERRORS_ONLY"
-                subnetworks: []
+          secondary_ranges:
+            gke-subnet:
+              - range_name: "pods"
+                ip_cidr_range: "10.157.0.0/17"
+              - range_name: "services"
+                ip_cidr_range: "10.157.144.0/20"
+          cloud_nats:
+            us-east1:
+              router_name: "cloudon-router-us-stg"
+              router_asn: "64514"
+              source_subnetwork_ip_ranges_to_nat: "ALL_SUBNETWORKS_ALL_IP_RANGES"
+              log_config_enable: true
+              log_config_filter: "ERRORS_ONLY"
+              subnetworks: []
 
-        net-glb:
-          inputs:
+      net-glb:
+        inputs:
 
-        net-dns:
-          inputs:
-            name: "us-stg-cloudon-one.com"
-            type: "public"
-            domain: us.stg.cloudon-one.com
-            description: "Managed by Terraform"
+      net-dns:
+        inputs:
+          name: "us-stg-cloudon-one.com"
+          type: "public"
+          domain: us.stg.cloudon-one.com
+          description: "Managed by Terraform"
 
-        net-iam-permissions:
-          inputs:
-            host-project:
-              bindings:
-                "roles/editor": []
+      net-iam-permissions:
+        inputs:
+          host-project:
+            bindings:
+              "roles/editor": []
 
-        net-firewalls:
-          inputs:
+      net-firewalls:
+        inputs:
 
-        net-vpc-attachments:
-          inputs:
+      net-vpc-attachments:
+        inputs:
 
-        svc-projects:
-          inputs:
-            billing_account: *billing_account
-            domain: *domain
-            service_project_name: "cloudon-stg-us-svc"
-            service_projects:
-              service:
-                lien: false
-                service_accounts:
-                  - "tf-us-stg"
-                active_apis:
-                  - "compute.googleapis.com"
-                  - "logging.googleapis.com"
-                  - "container.googleapis.com"
-                  - "cloudkms.googleapis.com"
-                  - "networkmanagement.googleapis.com"
-                  - "servicenetworking.googleapis.com"
-                  - "serviceusage.googleapis.com"
-                  - "sqladmin.googleapis.com"
-                activate_api_identities: []
-                random_project_id: true
-                disable_dependent_services: true
-                disable_services_on_destroy: true
-                default_service_account: "deprivilege"
-                credentials_path: ""
+      svc-projects:
+        inputs:
+          billing_account: *billing_account
+          domain: *domain
+          service_project_name: "cloudon-stg-us-svc"
+          service_projects:
+            service:
+              lien: false
+              service_accounts:
+                - "tf-us-stg"
+              active_apis:
+                - "compute.googleapis.com"
+                - "logging.googleapis.com"
+                - "container.googleapis.com"
+                - "cloudkms.googleapis.com"
+                - "networkmanagement.googleapis.com"
+                - "servicenetworking.googleapis.com"
+                - "serviceusage.googleapis.com"
+                - "sqladmin.googleapis.com"
+              activate_api_identities: []
+              random_project_id: true
+              disable_dependent_services: true
+              disable_services_on_destroy: true
+              default_service_account: "deprivilege"
+              credentials_path: ""
 
-        svc-gke:
-          inputs:
-            name: "cloudon-stg-us-cluster"
-            master_ipv4_cidr_block: "10.157.160.0/28"
-            ip_range_pods: "pods"
-            ip_range_services: "services"
-            http_load_balancing: true
-            horizontal_pod_autoscaling: true
-            network_policy: true
-            network_policy_provider: "CALICO"
-            enable_private_endpoint: true
-            enable_private_nodes: true
-            database_encryption: true
-            create_service_account: true
-            enable_network_egress_export: false
-            enable_resource_consumption_export: true
-            release_channel: "regular"
-            master_authorized_networks:
-              - cidr_block: "10.157.0.0/16"
-                display_name: "stg vpc cidr"
-              - cidr_block: "10.151.0.0/16"
-                display_name: "shrd dev vpc cidr"
+      svc-gke:
+        inputs:
+          name: "cloudon-stg-us-cluster"
+          master_ipv4_cidr_block: "10.157.160.0/28"
+          ip_range_pods: "pods"
+          ip_range_services: "services"
+          http_load_balancing: true
+          horizontal_pod_autoscaling: true
+          network_policy: true
+          network_policy_provider: "CALICO"
+          enable_private_endpoint: true
+          enable_private_nodes: true
+          database_encryption: true
+          create_service_account: true
+          enable_network_egress_export: false
+          enable_resource_consumption_export: true
+          release_channel: "regular"
+          master_authorized_networks:
+            - cidr_block: "10.157.0.0/16"
+              display_name: "stg vpc cidr"
+            - cidr_block: "10.151.0.0/16"
+              display_name: "shrd dev vpc cidr"
 
-            node_pools:
-              - name: "service-node-pool"
-                machine_type: "n2-standard-4"
-                min_count: 1
-                max_count: 3
-                disk_size_gb: 100
-                disk_type: "pd-ssd"
-                image_type: "COS"
-                auto_repair: true
-                auto_upgrade: true
-                preemptible: false
-                initial_node_count: 1
-              - name: "ci-pool"
-                machine_type: "n2-standard-2"
-                min_count: 1
-                max_count: 5
-                disk_size_gb: 100
-                disk_type: "pd-ssd"
-                image_type: "COS"
-                auto_repair: true
-                auto_upgrade: true
-                preemptible: false
-                initial_node_count: 1
+          node_pools:
+            - name: "service-node-pool"
+              machine_type: "n2-standard-4"
+              min_count: 1
+              max_count: 3
+              disk_size_gb: 100
+              disk_type: "pd-ssd"
+              image_type: "COS"
+              auto_repair: true
+              auto_upgrade: true
+              preemptible: false
+              initial_node_count: 1
+            - name: "ci-pool"
+              machine_type: "n2-standard-2"
+              min_count: 1
+              max_count: 5
+              disk_size_gb: 100
+              disk_type: "pd-ssd"
+              image_type: "COS"
+              auto_repair: true
+              auto_upgrade: true
+              preemptible: false
+              initial_node_count: 1
 
-            node_pools_oauth_scopes:
-                all: []
-                service-node-pool:
-                  - "https://www.googleapis.com/auth/cloud-platform"
-                ci-pool:
-                  - "https://www.googleapis.com/auth/cloud-platform"
+          node_pools_oauth_scopes:
+            all: []
+            service-node-pool:
+              - "https://www.googleapis.com/auth/cloud-platform"
+            ci-pool:
+              - "https://www.googleapis.com/auth/cloud-platform"
 
-            node_pools_labels:
-                all: {}
-                service-node-pool:
-                  service-node-pool: true
-                ci-pool:
-                  ci-pool: true
+          node_pools_labels:
+            all: {}
+            service-node-pool:
+              service-node-pool: true
+            ci-pool:
+              ci-pool: true
 
-            node_pools_metadata:
-                all: {}
-                service-node-pool:
-                  node-pool-metadata-custom-value: "service-node-pool"
-                ci-pool:
-                  node-pool-metadata-custom-value: "ci-pool"
+          node_pools_metadata:
+            all: {}
+            service-node-pool:
+              node-pool-metadata-custom-value: "service-node-pool"
+            ci-pool:
+              node-pool-metadata-custom-value: "ci-pool"
 
-            node_pools_tags:
-                all: []
-                service-node-pool:
-                - "service-node-pool"
-                ci-pool:
-                - "ci-pool"
-            cluster_resource_labels:
-                  "billable": "yes"
-                  "cost-center": "rnd"
-                  "location": "us"
+          node_pools_tags:
+            all: []
+            service-node-pool:
+              - "service-node-pool"
+            ci-pool:
+              - "ci-pool"
+          cluster_resource_labels:
+            "billable": "yes"
+            "cost-center": "rnd"
+            "location": "us"
 
-        svc-iam-permissions:
-          inputs:
-            svc-project:
-              bindings:
-                "roles/editor":
-                  - "group:gcp-devops@cloudon-one.com"
-            workload_identity_iam:
-              circle-runner:
-                k8s_sa_name: ci-runner
-                namespace: ci-runner
-                roles:
-                  - "roles/container.developer"
-                  - "roles/storage.objectAdmin"
+      svc-iam-permissions:
+        inputs:
+          svc-project:
+            bindings:
+              "roles/editor":
+                - "group:gcp-devops@cloudon-one.com"
+          workload_identity_iam:
+            circle-runner:
+              k8s_sa_name: ci-runner
+              namespace: ci-runner
+              roles:
+                - "roles/container.developer"
+                - "roles/storage.objectAdmin"
 
-        svc-sql:
-          inputs:
-            name: "cloudon-stg-us-sql"
-            random_instance_name: true
-            database_version: "POSTGRES_11"
-            deletion_protection: false
-            availability_type: "REGIONAL"
-            zone: "us-east1-b"
-            address: "10.157.163.0"
-            ip_configuration:
-              authorized_networks: []
-              ipv4_enabled: false
-              require_ssl: null
-            database_flags:
-              - name: "autovacuum"
-                value: "off"
-            create_timeout: "20m"
-            db_name: "cloudon"
-            db_charset: "UTF8"
-            db_collation: "en_US.UTF8"
-            user_name: "cloudon_test"
-            user_password: "cloudon_test_pasword"
-            backup_configuration:
-              enabled: true
-              start_time: "01:00"
-              location: "us"
-              point_in_time_recovery_enabled: true
-              transaction_log_retention_days: "7"
-              retained_backups: "7"
-              retention_unit:
+      svc-sql:
+        inputs:
+          name: "cloudon-stg-us-sql"
+          random_instance_name: true
+          database_version: "POSTGRES_11"
+          deletion_protection: false
+          availability_type: "REGIONAL"
+          zone: "us-east1-b"
+          address: "10.157.163.0"
+          ip_configuration:
+            authorized_networks: []
+            ipv4_enabled: false
+            require_ssl: null
+          database_flags:
+            - name: "autovacuum"
+              value: "off"
+          create_timeout: "20m"
+          db_name: "cloudon"
+          db_charset: "UTF8"
+          db_collation: "en_US.UTF8"
+          user_name: "cloudon_test"
+          user_password: "cloudon_test_pasword"
+          backup_configuration:
+            enabled: true
+            start_time: "01:00"
+            location: "us"
+            point_in_time_recovery_enabled: true
+            transaction_log_retention_days: "7"
+            retained_backups: "7"
+            retention_unit:
 
-        svc-redis:
-          inputs:
-            region: *us-stg-region
-            name: "cloudon-stg-us-redis"
-            alternative_location_id: "us-east1-c"
-            display_name: "cloudon-stg-us-redis"
-            location_id: "us-east1-b"
-            address: "10.157.165.0"
-            memory_size_gb: "1"
-            redis_version: "REDIS_5_0"
-            connect_mode: "PRIVATE_SERVICE_ACCESS"
+      svc-redis:
+        inputs:
+          region: *us-stg-region
+          name: "cloudon-stg-us-redis"
+          alternative_location_id: "us-east1-c"
+          display_name: "cloudon-stg-us-redis"
+          location_id: "us-east1-b"
+          address: "10.157.165.0"
+          memory_size_gb: "1"
+          redis_version: "REDIS_5_0"
+          connect_mode: "PRIVATE_SERVICE_ACCESS"
 
   prod:
     us:
@@ -1522,7 +1542,7 @@ envs:
               circle-runner:
                 k8s_sa_name: ci-runner
                 namespace: ci-runner
-                #project: *us-prod-svc-project
+                # project: *us-prod-svc-project
                 roles:
                   - "roles/container.developer"
                   - "roles/storage.objectCreator"
