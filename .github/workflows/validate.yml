@@ -174,11 +174,14 @@ jobs:
 
       - name: Run detect-secrets
         run: |
+          cp .secrets.baseline /tmp/baseline-before.json
           detect-secrets scan --baseline .secrets.baseline
-          git diff --exit-code .secrets.baseline || {
+          diff <(jq 'del(.generated_at)' /tmp/baseline-before.json) \
+               <(jq 'del(.generated_at)' .secrets.baseline) || {
             echo "::error::New secrets detected! Review .secrets.baseline changes."
             exit 1
           }
+          git checkout -- .secrets.baseline
 
   validate-terragrunt:
     name: Validate Terragrunt Configs
