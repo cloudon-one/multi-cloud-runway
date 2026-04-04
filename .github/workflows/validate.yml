@@ -112,6 +112,7 @@ jobs:
         with:
           directory: gcp-terragrunt-configuration/tf-modules
           framework: terraform
+          download_external_modules: true
           skip_check: CKV_AWS_79,CKV_GCP_62,CKV_TF_1,CKV_TF_2,CKV_GCP_114
           quiet: true
           compact: true
@@ -122,6 +123,7 @@ jobs:
         with:
           directory: /tmp/aws-modules
           framework: terraform
+          download_external_modules: true
           skip_check: CKV_AWS_79,CKV_TF_1,CKV_TF_2
           quiet: true
           compact: true
