@@ -21,13 +21,30 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
-      - name: Check .tf formatting
+      - name: Clone AWS modules for format check
         run: |
-          find . -name "*.tf" \
-            -not -path "*/.terragrunt-cache/*" \
-            -not -path "*/.terraform/*" | while read f; do
+          git clone --depth 1 --branch v1.0.0 \
+            https://github.com/cloudon-one/aws-terraform-modules.git /tmp/aws-modules
+
+      - name: Check .tf formatting (GCP local modules)
+        run: |
+          count=0
+          find gcp-terragrunt-configuration/tf-modules -name "*.tf" | while read f; do
+            echo "  $f"
             terraform fmt -check -diff "$f" || exit 1
+            count=$((count + 1))
           done
+          echo "Checked $count files"
+
+      - name: Check .tf formatting (AWS modules)
+        run: |
+          count=0
+          find /tmp/aws-modules -name "*.tf" | while read f; do
+            echo "  $f"
+            terraform fmt -check -diff "$f" || exit 1
+            count=$((count + 1))
+          done
+          echo "Checked $count files"
 
   terragrunt-fmt:
     name: Terragrunt HCL Format
