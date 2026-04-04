@@ -11,4 +11,4 @@ terraform {
   source = "git::https://git@github.com/cloudon-one/aws-terraform-modules.git//aws-terraform-acm?ref=${include.env.locals.module_ref}"
 }
 
-inputs = merge(include.env.locals.resource_vars, {})
+inputs = merge(include.env.locals.resource_vars["inputs"], {})

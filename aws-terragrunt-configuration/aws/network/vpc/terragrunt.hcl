@@ -19,7 +19,5 @@ locals {
 }
 
 inputs = {
-  vpc_configs = [
-    for vpc_key, vpc_config in local.resource_vars["inputs"] : vpc_config
-  ]
+  vpc_configs = local.resource_vars["inputs"]["vpc_configs"]
 }

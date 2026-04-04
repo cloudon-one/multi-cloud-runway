@@ -425,12 +425,14 @@ Environments:
         region: *DefReg
         sqs_role_arn: &sqs_role "arn:aws:iam::XXXXXXXXXXXX:role/api-sqs-applications"
         acm_certificate_arn: &acm_cert "arn:aws:acm:us-east-2:1XXXXXXXXXXXX:certificate/XXXXXXXXXXXX"
+        sqs_queue_name: "us-dev-api-gw-queue"
+        authorizer_name: "us-dev-api-gw-authorizer"
         inputs:
         - name: "us-dev-data-gw"
           description: ""
           stage: "dev"
           domain_name: "us-dev-data.cloudon-one.com"
-          sqs_role_arn: *sqs_role 
+          sqs_role_arn: *sqs_role
           endpoint_configuration:
             type: ["REGIONAL"]
             acm_certificate_arn: *acm_cert
@@ -444,7 +446,7 @@ Environments:
               http_method: ""
               authorization: ""
               sqs_name: ""
-              request_template: ""  
+              request_template: ""
       redis:
         region: *DefReg
         inputs:
@@ -646,12 +648,14 @@ Environments:
         region: *DefReg
         sqs_role_arn: &sqs_role "arn:aws:iam::XXXXXXXXXXXX:role/api-sqs-applications"
         acm_certificate_arn: &acm_cert "arn:aws:acm:us-east-2:1XXXXXXXXXXXX:certificate/XXXXXXXXXXXX"
+        sqs_queue_name: "us-stg-api-gw-queue"
+        authorizer_name: "us-stg-api-gw-authorizer"
         inputs:
         - name: "us-stg-data-gw"
           description: ""
           stage: "dev"
           domain_name: "us-stg-data.cloudon-one.com"
-          sqs_role_arn: *sqs_role 
+          sqs_role_arn: *sqs_role
           endpoint_configuration:
             type: ["REGIONAL"]
             acm_certificate_arn: *acm_cert
@@ -665,13 +669,13 @@ Environments:
               http_method: ""
               authorization: ""
               sqs_name: ""
-              request_template: ""  
+              request_template: ""
       redis:
         region: *DefReg
         inputs:
           engine_version: "6.x"
           node_type: "cache.t4g.medium"
- 
+
   eu-stg:
     Resources:
       vpc:
@@ -862,12 +866,14 @@ Environments:
         region: *EUReg
         sqs_role_arn: &sqs_role "arn:aws:iam::XXXXXXXXXXXX:role/api-sqs-applications"
         acm_certificate_arn: &acm_cert "arn:aws:acm:eu-west-2:1XXXXXXXXXXXX:certificate/XXXXXXXXXXXX"
+        sqs_queue_name: "eu-stg-api-gw-queue"
+        authorizer_name: "eu-stg-api-gw-authorizer"
         inputs:
         - name: "eu-stg-data-gw"
           description: ""
           stage: "dev"
           domain_name: "eu-stg-data.cloudon-one.com"
-          sqs_role_arn: *sqs_role 
+          sqs_role_arn: *sqs_role
           endpoint_configuration:
             type: ["REGIONAL"]
             acm_certificate_arn: *acm_cert
@@ -881,7 +887,7 @@ Environments:
               http_method: ""
               authorization: ""
               sqs_name: ""
-              request_template: ""  
+              request_template: ""
       redis:
         region: *EUReg
         inputs:
@@ -1078,12 +1084,14 @@ Environments:
         region: *EUReg
         sqs_role_arn: &sqs_role "arn:aws:iam::XXXXXXXXXXXX:role/api-sqs-applications"
         acm_certificate_arn: &acm_cert "arn:aws:acm:eu-west-2:1XXXXXXXXXXXX:certificate/XXXXXXXXXXXX"
+        sqs_queue_name: "eu-prod-api-gw-queue"
+        authorizer_name: "eu-prod-api-gw-authorizer"
         inputs:
         - name: "eu-prod-data-gw"
           description: ""
           stage: "dev"
           domain_name: "eu-prod-data.cloudon-one.com"
-          sqs_role_arn: *sqs_role 
+          sqs_role_arn: *sqs_role
           endpoint_configuration:
             type: ["REGIONAL"]
             acm_certificate_arn: *acm_cert
@@ -1097,7 +1105,7 @@ Environments:
               http_method: ""
               authorization: ""
               sqs_name: ""
-              request_template: ""  
+              request_template: ""
       redis:
         region: *EUReg
         inputs:
@@ -1294,12 +1302,14 @@ Environments:
         region: *DefReg
         sqs_role_arn: &sqs_role "arn:aws:iam::XXXXXXXXXXXX:role/api-sqs-applications"
         acm_certificate_arn: &acm_cert "arn:aws:acm:us-east-2:1XXXXXXXXXXXX:certificate/XXXXXXXXXXXX"
+        sqs_queue_name: "us-prod-api-gw-queue"
+        authorizer_name: "us-prod-api-gw-authorizer"
         inputs:
         - name: "us-prod-data-gw"
           description: ""
           stage: "dev"
           domain_name: "us-prod-data.cloudon-one.com"
-          sqs_role_arn: *sqs_role 
+          sqs_role_arn: *sqs_role
           endpoint_configuration:
             type: ["REGIONAL"]
             acm_certificate_arn: *acm_cert
@@ -1313,7 +1323,7 @@ Environments:
               http_method: ""
               authorization: ""
               sqs_name: ""
-              request_template: ""  
+              request_template: ""
       redis:
         region: *DefReg
         inputs:

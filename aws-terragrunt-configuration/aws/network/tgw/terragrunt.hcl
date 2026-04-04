@@ -66,11 +66,46 @@ inputs = merge(
   local.resource_vars["inputs"],
   {
     vpc_attachments = {
-      us_dev_vpc  = dependency.us_dev_vpc.outputs.vpc_id,
-      us_prod_vpc = dependency.us_prod_vpc.outputs.vpc_id,
-      us_stg_vpc  = dependency.us_stg_vpc.outputs.vpc_id,
-      eu_stg_vpc  = dependency.eu_stg_vpc.outputs.vpc_id,
-      eu_prod_vpc = dependency.eu_prod_vpc.outputs.vpc_id,
+      us_dev_vpc = {
+        vpc_id     = dependency.us_dev_vpc.outputs.vpc_id,
+        subnet_ids = dependency.us_dev_vpc.outputs.private_subnets,
+        tgw_routes = [
+          { destination_cidr_block = "10.32.0.0/16" },
+          { destination_cidr_block = "0.0.0.0/0", blackhole = true },
+        ]
+      },
+      us_stg_vpc = {
+        vpc_id     = dependency.us_stg_vpc.outputs.vpc_id,
+        subnet_ids = dependency.us_stg_vpc.outputs.private_subnets,
+        tgw_routes = [
+          { destination_cidr_block = "10.31.0.0/16" },
+          { destination_cidr_block = "0.0.0.0/0", blackhole = true },
+        ]
+      },
+      us_prod_vpc = {
+        vpc_id     = dependency.us_prod_vpc.outputs.vpc_id,
+        subnet_ids = dependency.us_prod_vpc.outputs.private_subnets,
+        tgw_routes = [
+          { destination_cidr_block = "10.33.0.0/16" },
+          { destination_cidr_block = "0.0.0.0/0", blackhole = true },
+        ]
+      },
+      eu_stg_vpc = {
+        vpc_id     = dependency.eu_stg_vpc.outputs.vpc_id,
+        subnet_ids = dependency.eu_stg_vpc.outputs.private_subnets,
+        tgw_routes = [
+          { destination_cidr_block = "10.34.0.0/16" },
+          { destination_cidr_block = "0.0.0.0/0", blackhole = true },
+        ]
+      },
+      eu_prod_vpc = {
+        vpc_id     = dependency.eu_prod_vpc.outputs.vpc_id,
+        subnet_ids = dependency.eu_prod_vpc.outputs.private_subnets,
+        tgw_routes = [
+          { destination_cidr_block = "10.35.0.0/16" },
+          { destination_cidr_block = "0.0.0.0/0", blackhole = true },
+        ]
+      },
     }
   }
 )
