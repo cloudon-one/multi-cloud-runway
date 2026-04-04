@@ -1,0 +1,55 @@
+extends: default
+
+rules:
+  line-length:
+    max: 200
+    level: warning
+
+  document-start: disable
+
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+
+  # Disable indentation check for vars.yaml files
+  # These use non-standard indent patterns consumed by terragrunt
+  indentation: disable
+
+  trailing-spaces:
+    level: error
+
+  comments:
+    min-spaces-from-content: 1
+
+  key-duplicates: enable
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+
+  hyphens:
+    max-spaces-after: 1
+
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: true
+
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+ignore: |
+  *.tfstate
+  *.tfstate.*
+  .terragrunt-cache/
+  node_modules/
+  .git/

@@ -9,8 +9,8 @@ common:
     owner: "cloudon"
     terraform: "true"
 
-Environments:  
-  
+Environments:
+
   master:
     Resources:
       org_units:
@@ -39,36 +39,36 @@ Environments:
             ou: "ou-XXXX-XXXXXXXX"
           eu-stg:
             account_name: "cloudon_eu_stg"
-            account_email: "aws_env_eu_stg@cloudon-one.com"  
+            account_email: "aws_env_eu_stg@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
-          eu-prod:  
+          eu-prod:
             account_name: "cloudon_eu_prod"
             account_email: "aws_env_eu_prod@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           management:
             account_name: "cloudon_master"
-            account_email: "aws_masters@cloudon-one.com" 
+            account_email: "aws_masters@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           security:
             account_name: "cloudon_security"
-            account_email: "aws_security@cloudon-one.com" 
+            account_email: "aws_security@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           log-archive:
             account_name: "cloudon_log_archive"
-            account_email: "aws_log_archive@cloudon-one.com"   
+            account_email: "aws_log_archive@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           shared-services:
             account_name: "cloudon_shared_svc"
-            account_email: "aws_env_shared_svc@cloudon-one.com"  
+            account_email: "aws_env_shared_svc@cloudon-one.com"
             ou: "ou-XXXX-XXXXXXXX"
           network:
             account_name: "cloudon_network"
             account_email: "aws_network@cloudon-one.com"
-            ou: "ou-XXXX-XXXXXXXX"    
+            ou: "ou-XXXX-XXXXXXXX"
       iam:
         inputs:
-          policies:  
-          roles:    
+          policies:
+          roles:
           users:
             inputs:
             - name: "user1"
@@ -103,17 +103,17 @@ Environments:
               users:
               - "user1"
               group: "qa"
-  
+
   log-archive:
     Resources:
       cloudtrail:
-        inputs: 
+        inputs:
           s3_bucket_name: "cloudon-org-s3-cloudtrails-logs-bucket"
           sns_topic_name: "cloudon-org-sns-cloudtrails-logs-topic"
           environment: "dev"
-  
+
   network:
-    Resources:   
+    Resources:
       vpc:
         region: *DefReg
         inputs:
@@ -137,7 +137,7 @@ Environments:
               Name: "core-vpc"
       tgw:
         region: *DefReg
-        inputs:  
+        inputs:
           name: "core-tgw"
           ram_principals: #attached accounts ids
             - 307990089504
@@ -154,29 +154,29 @@ Environments:
               tgw_routes:
                 - destination_cidr_block: "10.31.0.0/16"
                 - destination_cidr_block: "0.0.0.0/0"
-                  blackhole: true      
+                  blackhole: true
             us-prod-vpc:
               subnet_ids: ${dependency.us_prod_vpc.private_subnets}
               tgw_routes:
                 - destination_cidr_block: "10.33.0.0/16"
                 - destination_cidr_block: "0.0.0.0/0"
-                  blackhole: true   
+                  blackhole: true
             eu-stg-vpc:
               subnet_ids: ${dependency.eu_stg_vpc.private_subnets}
               tgw_routes:
                 - destination_cidr_block: "10.34.0.0/16"
                 - destination_cidr_block: "0.0.0.0/0"
-                  blackhole: true            
+                  blackhole: true
             eu-prod-vpc:
               subnet_ids: ${dependency.us_prod_vpc.private_subnets}
               tgw_routes:
                 - destination_cidr_block: "10.35.0.0/16"
                 - destination_cidr_block: "0.0.0.0/0"
-                  blackhole: true        
+                  blackhole: true
             tags:
               Owner: "Terraform"
-              Name: "core-tgw"           
-    
+              Name: "core-tgw"
+
   security:
     Resources:
       eventbridge:
@@ -184,7 +184,7 @@ Environments:
           rules:
           - name: "security-alerts"
             description: "Security alerts"
-            event_pattern: 
+            event_pattern:
               source: ["aws.securityhub"]
               detail-type: ["Security Hub Findings - Custom Action"]
               detail:
@@ -193,7 +193,7 @@ Environments:
                     label: ["CRITICAL"]
           - name: "security-logs"
             description: "Security logs"
-            event_pattern: 
+            event_pattern:
               source: ["aws.cloudtrail"]
               detail-type: ["AWS API Call via CloudTrail"]
               detail:
@@ -209,7 +209,7 @@ Environments:
               topic: "security-alerts"
             - id: "security-logs-notification"
               protocol: "sqs"
-              topic: "security-log-notification" 
+              topic: "security-log-notification"
       scp:
         inputs:
           policies:
@@ -244,15 +244,15 @@ Environments:
           vpc_cidr: "10.32.0.0/16"
           azs: ["us-east-2a", "us-east-2b", "us-east-2c"]
           private_subnets: ["10.32.2.0/24", "10.32.3.0/24", "10.32.1.0/24"]
-          public_subnets: ["10.32.101.0/24", "10.32.102.0/24","10.32.103.0/24"]
-          intra_subnets: ["10.32.8.16/28", "10.32.8.32/28","10.32.8.0/28"]
-          elasticache_subnets: ["10.32.10.0/24", "10.32.12.0/24","10.32.11.0/24"]
-          database_subnets: ["10.32.5.0/24", "10.32.7.0/24","10.32.6.0/24"]
+          public_subnets: ["10.32.101.0/24", "10.32.102.0/24", "10.32.103.0/24"]
+          intra_subnets: ["10.32.8.16/28", "10.32.8.32/28", "10.32.8.0/28"]
+          elasticache_subnets: ["10.32.10.0/24", "10.32.12.0/24", "10.32.11.0/24"]
+          database_subnets: ["10.32.5.0/24", "10.32.7.0/24", "10.32.6.0/24"]
           database_subnet_names: ["us-dev-vpc-db-us-east-2a", "us-dev-vpc-db-us-east-2c", "us-dev-vpc-db-us-east-2b"]
           private_subnet_names: ["us-dev-private", "us-dev-private", "us-dev-private"]
           public_subnet_names: ["us-dev-public", "us-dev-public"]
-          intra_subnet_names: ["us-dev-vpc-intra-us-east-2b", "us-dev-vpc-elasticache-us-east-2a","us-dev-vpc-elasticache-us-east-2c"]
-          elasticache_subnet_names : ["us-dev-vpc-elasticache-us-east-2a", "us-dev-vpc-elasticache-us-east-2b","us-dev-vpc-elasticache-us-east-2c"]
+          intra_subnet_names: ["us-dev-vpc-intra-us-east-2b", "us-dev-vpc-elasticache-us-east-2a", "us-dev-vpc-elasticache-us-east-2c"]
+          elasticache_subnet_names: ["us-dev-vpc-elasticache-us-east-2a", "us-dev-vpc-elasticache-us-east-2b", "us-dev-vpc-elasticache-us-east-2c"]
           enable_nat_gateway: true
           tags:
             terraform: "true"
@@ -261,8 +261,8 @@ Environments:
         region: *DefReg
         inputs:
           rds_instances:
-          - identifier: "us-dev-postgresql-rds" 
-            availability_zone: "us-east-2c"      
+          - identifier: "us-dev-postgresql-rds"
+            availability_zone: "us-east-2c"
             engine: "postgresql"
             engine_version: "14.10"
             instance_class: "db.t4g.small"
@@ -278,7 +278,7 @@ Environments:
       aurora:
         region: *DefReg
         inputs:
-          aurora_clusters:        
+          aurora_clusters:
           - identifier: "us-dev-risk-rds"
             availability_zone: "us-east-2"
             engine: "aurora-postgresql"
@@ -289,11 +289,11 @@ Environments:
             multi_az: false
             db_instance_role_associations:
             - s3export:
-              source_engine_version: "14.10"  
+              source_engine_version: "14.10"
               bucket_name: "us-dev-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXXX:role/us-dev-risk-rds-export"
-            - s3import: 
-              source_engine_version: "14.10" 
+            - s3import:
+              source_engine_version: "14.10"
               bucket_name: "us-dev-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXX:role/us-dev-risk-rds-import"
             tags:
@@ -302,7 +302,7 @@ Environments:
       dynamodb:
         inputs:
           - name: "us-dev-freshsales-contacts"
-            billing_mode: "PROVISIONED" 
+            billing_mode: "PROVISIONED"
             read_capacity: "1"
             write_capacity: "1"
             autoscaling_enabled: true
@@ -313,7 +313,7 @@ Environments:
               min_capacity: "1"
               max_capacity: "10"
           - name: "us-dev-features"
-            billing_mode: "PAY_PER_REQUEST"   
+            billing_mode: "PAY_PER_REQUEST"
       sns:
         region: *DefReg
         inputs:
@@ -326,8 +326,8 @@ Environments:
               topic: "us-dev-data"
             - id: "XXXXXXXXXXXXXXXXXXXXXXXX"
               protocol: "sqs"
-              topic: "us-dev-topic" 
-      s3: 
+              topic: "us-dev-topic"
+      s3:
         region: *DefReg
         inputs:
           - bucket_name: "us-dev-configs"
@@ -379,7 +379,7 @@ Environments:
           node_security_group_name: "sg-XXXXXXXXXXXXXX"
           cluster_additional_security_group_ids: ["sg-XXXXXXXXXXXXXX"]
           cluster_endpoint_public_access: true
-          eks_managed_node_groups: 
+          eks_managed_node_groups:
           - name: "separate-eks-mng-spot"
             instance_types: ["m6i.large", "m6id.large", "m6in.large", "m6idn.large", "m6a.large"]
             min_size: 0
@@ -405,7 +405,7 @@ Environments:
           Department: "Infra"
           ManagedBy: "Terraform"
           Name: "cloudon-one.com"
-      vpn:  
+      vpn:
         region: *DefReg
         inputs:
           customer_gateway_id: "cgw-XXXXXXXXXXXXXX"
@@ -455,10 +455,10 @@ Environments:
       tgw:
         region: &DefReg
         inputs:
-          tgw_routes: 
+          tgw_routes:
               - destination_cidr_block: "10.236.8.229/32"
 
-  us-stg: 
+  us-stg:
     Resources:
       vpc:
         region: *DefReg
@@ -467,15 +467,15 @@ Environments:
           vpc_cidr: "10.31.0.0/16"
           azs: ["us-east-2a", "us-east-2b", "us-east-2c"]
           private_subnets: ["10.31.2.0/24", "10.31.3.0/24", "10.31.1.0/24"]
-          public_subnets: ["10.31.101.0/24", "10.31.102.0/24","10.31.103.0/24"]
-          intra_subnets: ["10.31.8.16/28", "10.31.8.32/28","10.31.8.0/28"]
-          elasticache_subnets: ["10.31.10.0/24", "10.31.12.0/24","10.31.11.0/24"]
-          database_subnets: ["10.31.5.0/24", "10.31.7.0/24","10.31.6.0/24"]
+          public_subnets: ["10.31.101.0/24", "10.31.102.0/24", "10.31.103.0/24"]
+          intra_subnets: ["10.31.8.16/28", "10.31.8.32/28", "10.31.8.0/28"]
+          elasticache_subnets: ["10.31.10.0/24", "10.31.12.0/24", "10.31.11.0/24"]
+          database_subnets: ["10.31.5.0/24", "10.31.7.0/24", "10.31.6.0/24"]
           database_subnet_names: ["us-stg-vpc-db-us-east-2a", "us-stg-vpc-db-us-east-2c", "us-stg-vpc-db-us-east-2b"]
           private_subnet_names: ["us-stg-private", "us-stg-private", "us-stg-private"]
           public_subnet_names: ["us-stg-public", "us-stg-public"]
-          intra_subnet_names: ["us-stg-vpc-intra-us-east-2b", "us-stg-vpc-elasticache-us-east-2a","us-stg-vpc-elasticache-us-east-2c"]
-          elasticache_subnet_names : ["us-stg-vpc-elasticache-us-east-2a", "us-stg-vpc-elasticache-us-east-2b","us-stg-vpc-elasticache-us-east-2c"]
+          intra_subnet_names: ["us-stg-vpc-intra-us-east-2b", "us-stg-vpc-elasticache-us-east-2a", "us-stg-vpc-elasticache-us-east-2c"]
+          elasticache_subnet_names: ["us-stg-vpc-elasticache-us-east-2a", "us-stg-vpc-elasticache-us-east-2b", "us-stg-vpc-elasticache-us-east-2c"]
           enable_nat_gateway: true
           tags:
             terraform: "true"
@@ -484,8 +484,8 @@ Environments:
         region: *DefReg
         inputs:
           rds_instances:
-          - identifier: "us-stg-postgresql-rds" 
-            availability_zone: "us-east-2c"      
+          - identifier: "us-stg-postgresql-rds"
+            availability_zone: "us-east-2c"
             engine: "postgresql"
             engine_version: "14.10"
             instance_class: "db.t4g.small"
@@ -501,7 +501,7 @@ Environments:
       aurora:
         region: *DefReg
         inputs:
-          aurora_clusters:        
+          aurora_clusters:
           - identifier: "us-stg-risk-rds"
             availability_zone: "us-east-2"
             engine: "aurora-postgresql"
@@ -512,11 +512,11 @@ Environments:
             multi_az: false
             db_instance_role_associations:
             - s3export:
-              source_engine_version: "14.10"  
+              source_engine_version: "14.10"
               bucket_name: "us-stg-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXXX:role/us-stg-risk-rds-export"
-            - s3import: 
-              source_engine_version: "14.10" 
+            - s3import:
+              source_engine_version: "14.10"
               bucket_name: "us-stg-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXX:role/us-stg-risk-rds-import"
             tags:
@@ -525,7 +525,7 @@ Environments:
       dynamodb:
         inputs:
           - name: "us-stg-freshsales-contacts"
-            billing_mode: "PROVISIONED" 
+            billing_mode: "PROVISIONED"
             read_capacity: "1"
             write_capacity: "1"
             autoscaling_enabled: true
@@ -536,7 +536,7 @@ Environments:
               min_capacity: "1"
               max_capacity: "10"
           - name: "us-stg-features"
-            billing_mode: "PAY_PER_REQUEST"   
+            billing_mode: "PAY_PER_REQUEST"
       sns:
         region: *DefReg
         inputs:
@@ -549,8 +549,8 @@ Environments:
               topic: "us-stg-data"
             - id: "XXXXXXXXXXXXXXXXXXXXXXXX"
               protocol: "sqs"
-              topic: "us-stg-topic" 
-      s3: 
+              topic: "us-stg-topic"
+      s3:
         region: *DefReg
         inputs:
           - bucket_name: "us-stg-configs"
@@ -602,7 +602,7 @@ Environments:
           node_security_group_name: "sg-XXXXXXXXXXXXXX"
           cluster_additional_security_group_ids: ["sg-XXXXXXXXXXXXXX"]
           cluster_endpoint_public_access: true
-          eks_managed_node_groups: 
+          eks_managed_node_groups:
           - name: "separate-eks-mng-spot"
             instance_types: ["m6i.large", "m6id.large", "m6in.large", "m6idn.large", "m6a.large"]
             min_size: 0
@@ -628,7 +628,7 @@ Environments:
           Department: "Infra"
           ManagedBy: "Terraform"
           Name: "cloudon-one.com"
-      vpn:  
+      vpn:
         region: *DefReg
         inputs:
           customer_gateway_id: "cgw-XXXXXXXXXXXXXX"
@@ -685,15 +685,15 @@ Environments:
           vpc_cidr: "10.34.0.0/16"
           azs: ["eu-west-2a", "eu-east-2b", "eu-east-2c"]
           private_subnets: ["10.34.2.0/24", "10.34.3.0/24", "10.34.1.0/24"]
-          public_subnets: ["10.34.101.0/24", "10.34.102.0/24","10.34.103.0/24"]
-          intra_subnets: ["10.34.8.16/28", "10.34.8.32/28","10.34.8.0/28"]
-          elasticache_subnets: ["10.34.10.0/24", "10.34.12.0/24","10.34.11.0/24"]
-          database_subnets: ["10.34.5.0/24", "10.34.7.0/24","10.34.6.0/24"]
+          public_subnets: ["10.34.101.0/24", "10.34.102.0/24", "10.34.103.0/24"]
+          intra_subnets: ["10.34.8.16/28", "10.34.8.32/28", "10.34.8.0/28"]
+          elasticache_subnets: ["10.34.10.0/24", "10.34.12.0/24", "10.34.11.0/24"]
+          database_subnets: ["10.34.5.0/24", "10.34.7.0/24", "10.34.6.0/24"]
           database_subnet_names: ["eu-stg-vpc-db-eu-west-2a", "eu-stg-vpc-db-eu-west-2c", "eu-stg-vpc-db-eu-west-2b"]
           private_subnet_names: ["eu-stg-private", "eu-stg-private", "eu-stg-private"]
           public_subnet_names: ["eu-stg-public", "eu-stg-public"]
-          intra_subnet_names: ["eu-stg-vpc-intra-eu-west-2b", "eu-stg-vpc-elasticache-eu-west-2a","eu-stg-vpc-elasticache-eu-west-2c"]
-          elasticache_subnet_names : ["eu-stg-vpc-elasticache-eu-west-2a", "eu-stg-vpc-elasticache-eu-west-2b","eu-stg-vpc-elasticache-eu-west-2c"]
+          intra_subnet_names: ["eu-stg-vpc-intra-eu-west-2b", "eu-stg-vpc-elasticache-eu-west-2a", "eu-stg-vpc-elasticache-eu-west-2c"]
+          elasticache_subnet_names: ["eu-stg-vpc-elasticache-eu-west-2a", "eu-stg-vpc-elasticache-eu-west-2b", "eu-stg-vpc-elasticache-eu-west-2c"]
           enable_nat_gateway: true
           tags:
             terraform: "true"
@@ -702,8 +702,8 @@ Environments:
         region: *EUReg
         inputs:
           rds_instances:
-          - identifier: "eu-stg-postgresql-rds" 
-            availability_zone: "eu-west-2c"      
+          - identifier: "eu-stg-postgresql-rds"
+            availability_zone: "eu-west-2c"
             engine: "postgresql"
             engine_version: "14.10"
             instance_class: "db.t4g.small"
@@ -719,7 +719,7 @@ Environments:
       aurora:
         region: *EUReg
         inputs:
-          aurora_clusters:        
+          aurora_clusters:
           - identifier: "eu-stg-risk-rds"
             availability_zone: "eu-west-2"
             engine: "aurora-postgresql"
@@ -730,11 +730,11 @@ Environments:
             multi_az: false
             db_instance_role_associations:
             - s3export:
-              source_engine_version: "14.10"  
+              source_engine_version: "14.10"
               bucket_name: "eu-stg-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXXX:role/eu-stg-risk-rds-export"
-            - s3import: 
-              source_engine_version: "14.10" 
+            - s3import:
+              source_engine_version: "14.10"
               bucket_name: "eu-stg-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXX:role/eu-stg-risk-rds-import"
             tags:
@@ -743,7 +743,7 @@ Environments:
       dynamodb:
         inputs:
           - name: "eu-stg-freshsales-contacts"
-            billing_mode: "PROVISIONED" 
+            billing_mode: "PROVISIONED"
             read_capacity: "1"
             write_capacity: "1"
             autoscaling_enabled: true
@@ -754,7 +754,7 @@ Environments:
               min_capacity: "1"
               max_capacity: "10"
           - name: "eu-stg-features"
-            billing_mode: "PAY_PER_REQUEST"   
+            billing_mode: "PAY_PER_REQUEST"
       sns:
         region: *EUReg
         inputs:
@@ -767,8 +767,8 @@ Environments:
               topic: "eu-stg-data"
             - id: "XXXXXXXXXXXXXXXXXXXXXXXX"
               protocol: "sqs"
-              topic: "eu-stg-topic" 
-      s3: 
+              topic: "eu-stg-topic"
+      s3:
         region: *EUReg
         inputs:
           - bucket_name: "eu-stg-configs"
@@ -820,7 +820,7 @@ Environments:
           node_security_group_name: "sg-XXXXXXXXXXXXXX"
           cluster_additional_security_group_ids: ["sg-XXXXXXXXXXXXXX"]
           cluster_endpoint_public_access: true
-          eks_managed_node_groups: 
+          eks_managed_node_groups:
           - name: "separate-eks-mng-spot"
             instance_types: ["m6i.large", "m6id.large", "m6in.large", "m6idn.large", "m6a.large"]
             min_size: 0
@@ -846,7 +846,7 @@ Environments:
           Department: "Infra"
           ManagedBy: "Terraform"
           Name: "cloudon-one.com"
-      vpn:  
+      vpn:
         region: *DefReg
         inputs:
           customer_gateway_id: "cgw-XXXXXXXXXXXXXX"
@@ -903,15 +903,15 @@ Environments:
           vpc_cidr: "10.35.0.0/16"
           azs: ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
           private_subnets: ["10.35.2.0/24", "10.35.3.0/24", "10.35.1.0/24"]
-          public_subnets: ["10.35.101.0/24", "10.35.102.0/24","10.35.103.0/24"]
-          intra_subnets: ["10.35.8.16/28", "10.35.8.32/28","10.35.8.0/28"]
-          elasticache_subnets: ["10.35.10.0/24", "10.35.12.0/24","10.35.11.0/24"]
-          database_subnets: ["10.35.5.0/24", "10.35.7.0/24","10.35.6.0/24"]
+          public_subnets: ["10.35.101.0/24", "10.35.102.0/24", "10.35.103.0/24"]
+          intra_subnets: ["10.35.8.16/28", "10.35.8.32/28", "10.35.8.0/28"]
+          elasticache_subnets: ["10.35.10.0/24", "10.35.12.0/24", "10.35.11.0/24"]
+          database_subnets: ["10.35.5.0/24", "10.35.7.0/24", "10.35.6.0/24"]
           database_subnet_names: ["eu-prod-vpc-db-eu-west-2a", "eu-prod-vpc-db-eu-west-2c", "eu-prod-vpc-db-eu-west-2b"]
           private_subnet_names: ["eu-prod-private", "eu-prod-private", "eu-prod-private"]
           public_subnet_names: ["eu-prod-public", "eu-prod-public"]
-          intra_subnet_names: ["eu-prod-vpc-intra-eu-west-2b", "eu-prod-vpc-elasticache-eu-west-2a","eu-prod-vpc-elasticache-eu-west-2c"]
-          elasticache_subnet_names : ["eu-prod-vpc-elasticache-eu-west-2a", "eu-prod-vpc-elasticache-eu-west-2b","eu-prod-vpc-elasticache-eu-west-2c"]
+          intra_subnet_names: ["eu-prod-vpc-intra-eu-west-2b", "eu-prod-vpc-elasticache-eu-west-2a", "eu-prod-vpc-elasticache-eu-west-2c"]
+          elasticache_subnet_names: ["eu-prod-vpc-elasticache-eu-west-2a", "eu-prod-vpc-elasticache-eu-west-2b", "eu-prod-vpc-elasticache-eu-west-2c"]
           enable_nat_gateway: true
           tags:
             terraform: "true"
@@ -920,8 +920,8 @@ Environments:
         region: *EUReg
         inputs:
           rds_instances:
-          - identifier: "eu-prod-postgresql-rds" 
-            availability_zone: "eu-west-2c"      
+          - identifier: "eu-prod-postgresql-rds"
+            availability_zone: "eu-west-2c"
             engine: "postgresql"
             engine_version: "14.10"
             instance_class: "db.t4g.small"
@@ -937,7 +937,7 @@ Environments:
       aurora:
         region: *EUReg
         inputs:
-          aurora_clusters:        
+          aurora_clusters:
           - identifier: "eu-prod-risk-rds"
             availability_zone: "eu-west-2"
             engine: "aurora-postgresql"
@@ -948,11 +948,11 @@ Environments:
             multi_az: false
             db_instance_role_associations:
             - s3export:
-              source_engine_version: "14.10"  
+              source_engine_version: "14.10"
               bucket_name: "eu-prod-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXXX:role/eu-prod-risk-rds-export"
-            - s3import: 
-              source_engine_version: "14.10" 
+            - s3import:
+              source_engine_version: "14.10"
               bucket_name: "eu-prod-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXX:role/eu-prod-risk-rds-import"
             tags:
@@ -961,7 +961,7 @@ Environments:
       dynamodb:
         inputs:
           - name: "eu-prod-freshsales-contacts"
-            billing_mode: "PROVISIONED" 
+            billing_mode: "PROVISIONED"
             read_capacity: "1"
             write_capacity: "1"
             autoscaling_enabled: true
@@ -972,7 +972,7 @@ Environments:
               min_capacity: "1"
               max_capacity: "10"
           - name: "eu-prod-features"
-            billing_mode: "PAY_PER_REQUEST"   
+            billing_mode: "PAY_PER_REQUEST"
       sns:
         region: *EUReg
         inputs:
@@ -985,8 +985,8 @@ Environments:
               topic: "eu-prod-data"
             - id: "XXXXXXXXXXXXXXXXXXXXXXXX"
               protocol: "sqs"
-              topic: "eu-prod-topic" 
-      s3: 
+              topic: "eu-prod-topic"
+      s3:
         region: *EUReg
         inputs:
           - bucket_name: "eu-prod-configs"
@@ -1038,7 +1038,7 @@ Environments:
           node_security_group_name: "sg-XXXXXXXXXXXXXX"
           cluster_additional_security_group_ids: ["sg-XXXXXXXXXXXXXX"]
           cluster_endpoint_public_access: true
-          eks_managed_node_groups: 
+          eks_managed_node_groups:
           - name: "separate-eks-mng-spot"
             instance_types: ["m6i.large", "m6id.large", "m6in.large", "m6idn.large", "m6a.large"]
             min_size: 0
@@ -1064,7 +1064,7 @@ Environments:
           Department: "Infra"
           ManagedBy: "Terraform"
           Name: "cloudon-one.com"
-      vpn:  
+      vpn:
         region: *EUReg
         inputs:
           customer_gateway_id: "cgw-XXXXXXXXXXXXXX"
@@ -1121,15 +1121,15 @@ Environments:
           vpc_cidr: "10.33.0.0/16"
           azs: ["us-east-2a", "us-east-2b", "us-east-2c"]
           private_subnets: ["10.33.2.0/24", "10.33.3.0/24", "10.33.1.0/24"]
-          public_subnets: ["10.33.101.0/24", "10.33.102.0/24","10.33.103.0/24"]
-          intra_subnets: ["10.33.8.16/28", "10.33.8.32/28","10.33.8.0/28"]
-          elasticache_subnets: ["10.33.10.0/24", "10.33.12.0/24","10.33.11.0/24"]
-          database_subnets: ["10.33.5.0/24", "10.33.7.0/24","10.33.6.0/24"]
+          public_subnets: ["10.33.101.0/24", "10.33.102.0/24", "10.33.103.0/24"]
+          intra_subnets: ["10.33.8.16/28", "10.33.8.32/28", "10.33.8.0/28"]
+          elasticache_subnets: ["10.33.10.0/24", "10.33.12.0/24", "10.33.11.0/24"]
+          database_subnets: ["10.33.5.0/24", "10.33.7.0/24", "10.33.6.0/24"]
           database_subnet_names: ["us-prod-vpc-db-us-east-2a", "us-prod-vpc-db-us-east-2c", "us-prod-vpc-db-us-east-2b"]
           private_subnet_names: ["us-prod-private", "us-prod-private", "us-prod-private"]
           public_subnet_names: ["us-prod-public", "us-prod-public"]
-          intra_subnet_names: ["us-prod-vpc-intra-us-east-2b", "us-prod-vpc-elasticache-us-east-2a","us-prod-vpc-elasticache-us-east-2c"]
-          elasticache_subnet_names : ["us-prod-vpc-elasticache-us-east-2a", "us-prod-vpc-elasticache-us-east-2b","us-prod-vpc-elasticache-us-east-2c"]
+          intra_subnet_names: ["us-prod-vpc-intra-us-east-2b", "us-prod-vpc-elasticache-us-east-2a", "us-prod-vpc-elasticache-us-east-2c"]
+          elasticache_subnet_names: ["us-prod-vpc-elasticache-us-east-2a", "us-prod-vpc-elasticache-us-east-2b", "us-prod-vpc-elasticache-us-east-2c"]
           enable_nat_gateway: true
           tags:
             terraform: "true"
@@ -1138,8 +1138,8 @@ Environments:
         region: *DefReg
         inputs:
           rds_instances:
-          - identifier: "us-prod-postgresql-rds" 
-            availability_zone: "us-east-2c"      
+          - identifier: "us-prod-postgresql-rds"
+            availability_zone: "us-east-2c"
             engine: "postgresql"
             engine_version: "14.10"
             instance_class: "db.t4g.small"
@@ -1155,7 +1155,7 @@ Environments:
       aurora:
         region: *DefReg
         inputs:
-          aurora_clusters:        
+          aurora_clusters:
           - identifier: "us-prod-risk-rds"
             availability_zone: "us-east-2"
             engine: "aurora-postgresql"
@@ -1166,11 +1166,11 @@ Environments:
             multi_az: false
             db_instance_role_associations:
             - s3export:
-              source_engine_version: "14.10"  
+              source_engine_version: "14.10"
               bucket_name: "us-prod-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXXX:role/us-prod-risk-rds-export"
-            - s3import: 
-              source_engine_version: "14.10" 
+            - s3import:
+              source_engine_version: "14.10"
               bucket_name: "us-prod-risk-engine-features"
               ingestion_role: "arn:aws:iam::XXXXXXXXXXXXX:role/us-prod-risk-rds-import"
             tags:
@@ -1179,7 +1179,7 @@ Environments:
       dynamodb:
         inputs:
           - name: "us-prod-freshsales-contacts"
-            billing_mode: "PROVISIONED" 
+            billing_mode: "PROVISIONED"
             read_capacity: "1"
             write_capacity: "1"
             autoscaling_enabled: true
@@ -1190,7 +1190,7 @@ Environments:
               min_capacity: "1"
               max_capacity: "10"
           - name: "us-prod-features"
-            billing_mode: "PAY_PER_REQUEST"   
+            billing_mode: "PAY_PER_REQUEST"
       sns:
         region: *DefReg
         inputs:
@@ -1203,8 +1203,8 @@ Environments:
               topic: "us-prod-data"
             - id: "XXXXXXXXXXXXXXXXXXXXXXXX"
               protocol: "sqs"
-              topic: "us-prod-topic" 
-      s3: 
+              topic: "us-prod-topic"
+      s3:
         region: *DefReg
         inputs:
           - bucket_name: "us-prod-configs"
@@ -1256,7 +1256,7 @@ Environments:
           node_security_group_name: "sg-XXXXXXXXXXXXXX"
           cluster_additional_security_group_ids: ["sg-XXXXXXXXXXXXXX"]
           cluster_endpoint_public_access: true
-          eks_managed_node_groups: 
+          eks_managed_node_groups:
           - name: "separate-eks-mng-spot"
             instance_types: ["m6i.large", "m6id.large", "m6in.large", "m6idn.large", "m6a.large"]
             min_size: 0
@@ -1282,7 +1282,7 @@ Environments:
           Department: "Infra"
           ManagedBy: "Terraform"
           Name: "cloudon-one.com"
-      vpn:  
+      vpn:
         region: *DefReg
         inputs:
           customer_gateway_id: "cgw-XXXXXXXXXXXXXX"
@@ -1329,64 +1329,3 @@ Environments:
         inputs:
           engine_version: "6.x"
           node_type: "cache.t4g.medium"
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-    
-      
-
-
-  
-
-
-      
-      
-
-           
-
-    
-      
-      
-
-
-  
-
-
-
-    
-
-
-  
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-    

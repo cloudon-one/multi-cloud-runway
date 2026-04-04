@@ -164,10 +164,9 @@ jobs:
             .yamllint.yaml \
             .github/workflows/*.yml
 
-      - name: Run yamllint (vars.yaml - warnings only)
-        continue-on-error: true
+      - name: Run yamllint (vars.yaml)
         run: |
-          yamllint -c .yamllint.yaml \
+          yamllint -c .yamllint-vars.yaml \
             aws-terragrunt-configuration/aws/vars.yaml \
             gcp-terragrunt-configuration/terragrunt/vars.yaml
 
