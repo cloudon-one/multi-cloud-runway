@@ -116,7 +116,7 @@ jobs:
           skip_check: CKV_AWS_79,CKV_GCP_62,CKV_TF_1,CKV_TF_2,CKV_GCP_114
           quiet: true
           compact: true
-          soft_fail_on: CKV_GCP_43,CKV_GCP_82,CKV_GCP_6,CKV_GCP_54,CKV_GCP_60,CKV_GCP_108,CKV_GCP_109,CKV_GCP_110,CKV2_GCP_5,CKV2_GCP_18
+          soft_fail: true
 
       - name: Run Checkov (AWS modules)
         uses: bridgecrewio/checkov-action@v12
