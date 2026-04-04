@@ -9,7 +9,7 @@ locals {
   resource_vars = local.common_vars["envs"]["${local.environment}"]["resources"]["${local.resource}"]
 }
 
-inputs =  {
+inputs = {
   folders_iam = {
     "${dependency.admin.outputs.folders["mgmt"].parent}" = {
       bindings = merge(local.resource_vars["inputs"]["folder"]["bindings"], {})

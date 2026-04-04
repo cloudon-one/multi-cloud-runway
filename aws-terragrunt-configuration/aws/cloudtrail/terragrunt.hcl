@@ -15,7 +15,7 @@ locals {
   common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
   resource      = basename(get_terragrunt_dir())
   resource_vars = local.common_vars["Environments"]["log-archive"]["Resources"]["${local.resource}"]
-  }
+}
 
 inputs = merge(
-  local.resource_vars["inputs"],{})
+local.resource_vars["inputs"], {})

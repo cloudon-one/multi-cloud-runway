@@ -8,7 +8,7 @@ terraform {
 
     ]
     arguments = [
-      "-compact-warnings", 
+      "-compact-warnings",
     ]
   }
 }
@@ -21,8 +21,8 @@ locals {
 }
 
 remote_state {
-    backend = "s3"
-    generate = {
+  backend = "s3"
+  generate = {
     path      = "backend.tf"
     if_exists = "overwrite_terragrunt"
   }

@@ -10,42 +10,42 @@ include "version" {
 dependency "vpc" {
   config_path = "../vpc"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }
 dependency "us_dev_vpc" {
   config_path = "../../vpc/us/dev"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }
 dependency "us_prod_vpc" {
   config_path = "../../vpc/us/prod"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }
 dependency "us_stg_vpc" {
   config_path = "../../vpc/us/stg"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }
 dependency "eu_stg_vpc" {
   config_path = "../../vpc/eu/stg"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }
 dependency "eu_prod_vpc" {
   config_path = "../../vpc/eu/prod"
   mock_outputs = {
-    vpc_id = "dummy_vpc_id"
+    vpc_id          = "dummy_vpc_id"
     private_subnets = ["dummy_subnet_0", "dummy_subnet_1"]
   }
 }

@@ -14,19 +14,19 @@ terraform {
 }
 
 locals {
-  common_vars = yamldecode(file("vars.yaml"))
-  environment = basename(dirname(get_terragrunt_dir()))
-  folder = basename(dirname(dirname(get_terragrunt_dir())))
-  folder_id = "${local.folder}/${local.environment}"
-  resource = basename(get_terragrunt_dir())
+  common_vars   = yamldecode(file("vars.yaml"))
+  environment   = basename(dirname(get_terragrunt_dir()))
+  folder        = basename(dirname(dirname(get_terragrunt_dir())))
+  folder_id     = "${local.folder}/${local.environment}"
+  resource      = basename(get_terragrunt_dir())
   resource_vars = try(local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["resources"]["${local.resource}"], {})
 }
 
 remote_state {
   backend = "gcs"
   config = {
-    bucket = "${local.common_vars.common.labels.owner}-admin-${local.common_vars.common.suffix}-${local.folder}-${local.environment}"
-    prefix = "${path_relative_to_include()}"
+    bucket               = "${local.common_vars.common.labels.owner}-admin-${local.common_vars.common.suffix}-${local.folder}-${local.environment}"
+    prefix               = "${path_relative_to_include()}"
     skip_bucket_creation = true
   }
   generate = {

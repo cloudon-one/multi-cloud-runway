@@ -19,4 +19,4 @@ locals {
 }
 
 inputs = merge(
-  local.resource_vars["inputs"],{})
+local.resource_vars["inputs"], {})

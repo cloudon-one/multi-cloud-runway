@@ -17,9 +17,9 @@ locals {
   resource_vars = local.common_vars["envs"]["${local.folder}"]["${local.environment}"]["resources"]["${local.resource}"]
 }
 
-dependencies {paths = [
+dependencies { paths = [
   "../../../global/admin"
-]}
+] }
 
 dependency "admin" {
   config_path = "../../../global/admin"

@@ -12,4 +12,4 @@ terraform {
 }
 
 inputs = merge(
-  include.env.locals.resource_vars["inputs"], {})
+include.env.locals.resource_vars["inputs"], {})

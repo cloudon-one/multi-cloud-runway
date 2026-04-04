@@ -21,11 +21,36 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
-      - name: Check HCL formatting
+      - name: Check .tf formatting
         run: |
-          find . -name "*.tf" -not -path "*/.terragrunt-cache/*" -not -path "*/.terraform/*" | while read f; do
+          find . -name "*.tf" \
+            -not -path "*/.terragrunt-cache/*" \
+            -not -path "*/.terraform/*" | while read f; do
             terraform fmt -check -diff "$f" || exit 1
           done
+
+  terragrunt-fmt:
+    name: Terragrunt HCL Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terragrunt
+        run: |
+          curl -sL https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.0/terragrunt_linux_amd64 \
+            -o /usr/local/bin/terragrunt && chmod +x /usr/local/bin/terragrunt
+
+      - name: Check .hcl formatting (AWS)
+        run: |
+          terragrunt hcl fmt --check --diff \
+            --exclude-dir .terragrunt-cache \
+            --working-dir aws-terragrunt-configuration
+
+      - name: Check .hcl formatting (GCP)
+        run: |
+          terragrunt hcl fmt --check --diff \
+            --exclude-dir .terragrunt-cache \
+            --working-dir gcp-terragrunt-configuration
 
   tflint:
     name: TFLint
@@ -36,11 +61,22 @@ jobs:
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
 
-      - name: Run TFLint
+      - name: Lint GCP modules
         run: |
           find gcp-terragrunt-configuration/tf-modules -mindepth 1 -maxdepth 1 -type d | while read dir; do
             echo "Linting $dir"
             (cd "$dir" && tflint --init && tflint --minimum-failure-severity=error) || exit 1
+          done
+
+      - name: Lint AWS modules (cloned)
+        run: |
+          git clone --depth 1 --branch v1.0.0 \
+            https://github.com/cloudon-one/aws-terraform-modules.git /tmp/aws-modules
+          find /tmp/aws-modules -mindepth 1 -maxdepth 1 -type d -name "aws-terraform-*" | while read dir; do
+            if ls "$dir"/*.tf 1>/dev/null 2>&1; then
+              echo "Linting $dir"
+              (cd "$dir" && tflint --init && tflint --minimum-failure-severity=error) || exit 1
+            fi
           done
 
   security-scan:
@@ -49,7 +85,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Checkov
+      - name: Clone AWS modules for scanning
+        run: |
+          git clone --depth 1 --branch v1.0.0 \
+            https://github.com/cloudon-one/aws-terraform-modules.git /tmp/aws-modules
+
+      - name: Run Checkov (GCP modules)
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: gcp-terragrunt-configuration/tf-modules
@@ -58,6 +99,36 @@ jobs:
           quiet: true
           compact: true
           soft_fail_on: CKV_GCP_43,CKV_GCP_82
+
+      - name: Run Checkov (AWS modules)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: /tmp/aws-modules
+          framework: terraform
+          skip_check: CKV_AWS_79,CKV_TF_1,CKV_TF_2
+          quiet: true
+          compact: true
+          soft_fail: true
+
+      - name: Run Checkov (AWS Terragrunt configs)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: aws-terragrunt-configuration
+          framework: terraform
+          skip_check: CKV_AWS_79,CKV_TF_1,CKV_TF_2
+          quiet: true
+          compact: true
+          soft_fail: true
+
+      - name: Run Checkov (GCP Terragrunt configs)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: gcp-terragrunt-configuration/terragrunt
+          framework: terraform
+          skip_check: CKV_GCP_62,CKV_TF_1,CKV_TF_2,CKV_GCP_114
+          quiet: true
+          compact: true
+          soft_fail: true
 
   yaml-lint:
     name: YAML Lint
@@ -68,11 +139,18 @@ jobs:
       - name: Install yamllint
         run: pip install yamllint
 
-      - name: Run yamllint
+      - name: Run yamllint (CI configs)
         run: |
           yamllint -c .yamllint.yaml \
             .yamllint.yaml \
             .github/workflows/*.yml
+
+      - name: Run yamllint (vars.yaml - warnings only)
+        continue-on-error: true
+        run: |
+          yamllint -c .yamllint.yaml \
+            aws-terragrunt-configuration/aws/vars.yaml \
+            gcp-terragrunt-configuration/terragrunt/vars.yaml
 
   markdown-lint:
     name: Markdown Lint
@@ -94,5 +172,36 @@ jobs:
       - name: Install detect-secrets
         run: pip install detect-secrets
 
-      - name: Run detect-secrets
-        run: detect-secrets scan --baseline .secrets.baseline
+      - name: Run detect-secrets audit
+        run: |
+          detect-secrets scan --baseline .secrets.baseline
+          detect-secrets audit --report --baseline .secrets.baseline
+
+  validate-terragrunt:
+    name: Validate Terragrunt Configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+
+      - name: Setup Terragrunt
+        run: |
+          curl -sL https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.0/terragrunt_linux_amd64 \
+            -o /usr/local/bin/terragrunt && chmod +x /usr/local/bin/terragrunt
+
+      - name: Validate AWS HCL syntax
+        run: |
+          terragrunt hcl validate \
+            --exclude-dir .terragrunt-cache \
+            --working-dir aws-terragrunt-configuration
+
+      - name: Validate GCP HCL syntax
+        continue-on-error: true
+        run: |
+          terragrunt hcl validate \
+            --exclude-dir .terragrunt-cache \
+            --working-dir gcp-terragrunt-configuration

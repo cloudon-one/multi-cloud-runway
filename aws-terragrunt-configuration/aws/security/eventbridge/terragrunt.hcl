@@ -19,5 +19,5 @@ locals {
 }
 
 inputs = {
-  rules        = local.resource_vars["inputs"]["rules"]
+  rules = local.resource_vars["inputs"]["rules"]
 }
