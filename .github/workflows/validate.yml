@@ -172,10 +172,13 @@ jobs:
       - name: Install detect-secrets
         run: pip install detect-secrets
 
-      - name: Run detect-secrets audit
+      - name: Run detect-secrets
         run: |
           detect-secrets scan --baseline .secrets.baseline
-          detect-secrets audit --report --baseline .secrets.baseline
+          git diff --exit-code .secrets.baseline || {
+            echo "::error::New secrets detected! Review .secrets.baseline changes."
+            exit 1
+          }
 
   validate-terragrunt:
     name: Validate Terragrunt Configs
