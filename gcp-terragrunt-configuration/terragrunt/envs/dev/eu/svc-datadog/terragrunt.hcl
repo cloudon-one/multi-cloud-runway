@@ -2,12 +2,21 @@ terraform {
   source = "../../../../../tf-modules//terraform-google-dd"
 }
 
-include {
+include "root" {
   path = find_in_parent_folders()
 }
 
 dependency "svc_project" {
   config_path = "../svc-projects"
+  mock_outputs = {
+    projects = {
+      "service" = {
+        project_id     = "mock-service-project"
+        project_number = "000000000000"
+      }
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 locals {

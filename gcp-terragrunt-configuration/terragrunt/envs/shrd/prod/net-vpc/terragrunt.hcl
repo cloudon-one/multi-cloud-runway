@@ -23,8 +23,42 @@ dependencies { paths = [
 
 dependency "admin" {
   config_path = "../../../global/admin"
+  mock_outputs = {
+    folders = {
+      "dev/eu" = {
+        name   = "folders/mock-dev-eu"
+        parent = "organizations/mock"
+      }
+      "prod/eu" = {
+        name   = "folders/mock-prod-eu"
+        parent = "organizations/mock"
+      }
+      "prod/us" = {
+        name   = "folders/mock-prod-us"
+        parent = "organizations/mock"
+      }
+      "shrd/dev" = {
+        name   = "folders/mock-shrd-dev"
+        parent = "organizations/mock"
+      }
+      "shrd/prod" = {
+        name   = "folders/mock-shrd-prod"
+        parent = "organizations/mock"
+      }
+      "stg/eu" = {
+        name   = "folders/mock-stg-eu"
+        parent = "organizations/mock"
+      }
+      "mgmt" = {
+        name   = "folders/mock-mgmt"
+        parent = "organizations/mock"
+      }
+    }
+    network_self_link = "projects/mock/global/networks/mock"
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
-include {
+include "root" {
   path = find_in_parent_folders()
 }

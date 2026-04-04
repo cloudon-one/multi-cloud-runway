@@ -33,4 +33,4 @@ locals {
 #  }
 #}
 
-skip = true
+# skip = true  # Removed: not supported in Terragrunt v1.0.0

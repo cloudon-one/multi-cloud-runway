@@ -19,6 +19,6 @@ locals {
   resource_vars = local.common_vars["envs"]["${local.environment}"]["resources"]["${local.resource}"]
 }
 
-include {
+include "root" {
   path = find_in_parent_folders()
 }

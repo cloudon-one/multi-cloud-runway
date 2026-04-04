@@ -29,12 +29,70 @@ dependencies { paths = [
 
 dependency "admin" {
   config_path = "../../../global/admin"
+  mock_outputs = {
+    folders = {
+      "dev/eu" = {
+        name   = "folders/mock-dev-eu"
+        parent = "organizations/mock"
+      }
+      "prod/eu" = {
+        name   = "folders/mock-prod-eu"
+        parent = "organizations/mock"
+      }
+      "prod/us" = {
+        name   = "folders/mock-prod-us"
+        parent = "organizations/mock"
+      }
+      "shrd/dev" = {
+        name   = "folders/mock-shrd-dev"
+        parent = "organizations/mock"
+      }
+      "shrd/prod" = {
+        name   = "folders/mock-shrd-prod"
+        parent = "organizations/mock"
+      }
+      "stg/eu" = {
+        name   = "folders/mock-stg-eu"
+        parent = "organizations/mock"
+      }
+      "mgmt" = {
+        name   = "folders/mock-mgmt"
+        parent = "organizations/mock"
+      }
+    }
+    network_self_link = "projects/mock/global/networks/mock"
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 dependency "net-vpc" {
   config_path = "../net-vpc"
+  mock_outputs = {
+    project_id         = "mock-project"
+    network_self_link  = "projects/mock/global/networks/mock"
+    network_name       = "mock-network"
+    subnets_self_links = ["projects/mock/regions/mock/subnetworks/mock"]
+    subnets = {
+      "europe-west1/gke-subnet" = {
+        self_link = "projects/mock/regions/europe-west1/subnetworks/gke-subnet"
+        name      = "gke-subnet"
+        region    = "europe-west1"
+      }
+      "us-east1/gke-subnet" = {
+        self_link = "projects/mock/regions/us-east1/subnetworks/gke-subnet"
+        name      = "gke-subnet"
+        region    = "us-east1"
+      }
+      "$REGION/$SUBNET" = {
+        self_link = "projects/mock/regions/mock/subnetworks/mock"
+        name      = "mock-subnet"
+        region    = "mock-region"
+      }
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
-include {
+include "root" {
   path = find_in_parent_folders()
 }

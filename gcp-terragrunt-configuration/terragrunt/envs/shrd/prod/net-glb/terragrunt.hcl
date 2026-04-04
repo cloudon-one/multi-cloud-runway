@@ -20,13 +20,46 @@ locals {
 
 dependency "net-vpc" {
   config_path = "../net-vpc"
+  mock_outputs = {
+    project_id         = "mock-project"
+    network_self_link  = "projects/mock/global/networks/mock"
+    network_name       = "mock-network"
+    subnets_self_links = ["projects/mock/regions/mock/subnetworks/mock"]
+    subnets = {
+      "europe-west1/gke-subnet" = {
+        self_link = "projects/mock/regions/europe-west1/subnetworks/gke-subnet"
+        name      = "gke-subnet"
+        region    = "europe-west1"
+      }
+      "us-east1/gke-subnet" = {
+        self_link = "projects/mock/regions/us-east1/subnetworks/gke-subnet"
+        name      = "gke-subnet"
+        region    = "us-east1"
+      }
+      "$REGION/$SUBNET" = {
+        self_link = "projects/mock/regions/mock/subnetworks/mock"
+        name      = "mock-subnet"
+        region    = "mock-region"
+      }
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 dependency "gke_project" {
   config_path = "../svc-projects"
+  mock_outputs = {
+    projects = {
+      "service" = {
+        project_id     = "mock-service-project"
+        project_number = "000000000000"
+      }
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 
-include {
+include "root" {
   path = find_in_parent_folders()
 }

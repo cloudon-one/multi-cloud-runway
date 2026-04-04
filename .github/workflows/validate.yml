@@ -224,7 +224,6 @@ jobs:
             --working-dir aws-terragrunt-configuration
 
       - name: Validate GCP HCL syntax
-        continue-on-error: true
         run: |
           terragrunt hcl validate \
             --exclude-dir .terragrunt-cache \
