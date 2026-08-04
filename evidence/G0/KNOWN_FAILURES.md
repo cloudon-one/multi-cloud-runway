@@ -100,3 +100,13 @@ upstream-module version table is archived in
 `evidence/G0/module-versions.log` (local-only). Notables for later gates:
 `kubernetes-engine` 31.1.0, `project-factory` 15.0.1, `kms` 2.3.0 (used only
 inside `terraform-google-projects`), `sql-db` 21.0.0.
+
+## 10. GitHub Actions is disabled — org billing lock
+
+Every job on PR #1 failed in ~1–8 s with:
+`The job was not started because your account is locked due to a billing issue.`
+(run 30877865205). No CI check on this repo can execute until an org admin
+resolves the `cloudon-one` GitHub billing lock. **This blocks G2 entirely**
+(CI gate hardening) and means the existing `validate.yml` checks have not
+actually been enforcing anything on recent PRs.
+**Fix:** operator action — GitHub org Settings → Billing; out of repo scope.
