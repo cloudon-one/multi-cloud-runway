@@ -102,3 +102,7 @@ vendor/
 # .terraform.lock.hcl  # Uncomment if you want to ignore lock files
 .claude/settings.local.json
 
+
+# Python
+__pycache__/
+*.pyc
