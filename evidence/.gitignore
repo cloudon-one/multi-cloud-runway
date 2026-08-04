@@ -1,6 +1,0 @@
-# Evidence retention: track only durable summaries (see README.md).
-# Raw logs and plan outputs stay local / in CI artifact storage.
-*.log
-*.txt
-*.tfplan
-*.binary
