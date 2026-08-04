@@ -188,8 +188,7 @@ cd gcp-terragrunt-configuration/terragrunt/envs/prod/us/svc-gke && terragrunt pl
 ### GCP
 
 CIDR allocations (VPCs, subnets, GKE secondary ranges) are generated from
-`vars.yaml` into [NETWORK_TOPOLOGY.md](NETWORK_TOPOLOGY.md) — the table
-formerly maintained here had drifted from the actual declared ranges.
+`vars.yaml`.
 
 GCP uses **Shared VPC** (host/service project model), **VPC Peering** between shared and environment VPCs,
 **Cloud NAT** for outbound, and **Cloud DNS** for resolution.
