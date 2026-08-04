@@ -283,3 +283,6 @@ preprod-gates-local: ## Local equivalent of .github/workflows/preprod-gates.yml 
 	@echo "== policy-as-code (SCP fixture simulation, G3-15)"
 	@python3 scripts/validate-scp.py
 	@echo "✅ local gates pass"
+
+cmek-wiring: ## Regenerate CMEK_WIRING.md (post-apply service-agent grants)
+	@python3 scripts/render-cmek-wiring.py

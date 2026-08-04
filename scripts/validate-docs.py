@@ -359,7 +359,8 @@ def check_staleness(root_dir: str = ".") -> bool:
             print(f"  ✅ {name}: fresh")
     for script, argsx in [("coverage-matrix.py", ["--check"]),
                           ("placeholder-scan.py", ["--check"]),
-                          ("render-topology.py", ["--check"])]:
+                          ("render-topology.py", ["--check"]),
+                          ("render-cmek-wiring.py", ["--check"])]:
         r = subprocess.run([sys.executable, str(root / "scripts" / script), *argsx],
                            capture_output=True, text=True)
         print(f"  {'✅' if r.returncode == 0 else '❌'} scripts/{script} {' '.join(argsx)}")

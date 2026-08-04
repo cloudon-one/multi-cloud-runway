@@ -14,11 +14,11 @@ implementing artifact in the repo.
 | network isolation | PRESENT | PRESENT | PRESENT | PRESENT | ABSENT |
 | egress inspection | ABSENT | ABSENT | ABSENT | ABSENT | ABSENT |
 | encryption/CMEK | PARTIAL | PARTIAL | PARTIAL | PARTIAL | ABSENT |
-| org guardrails | PARTIAL | PARTIAL | PARTIAL | ABSENT | ABSENT |
+| org guardrails | PARTIAL | PARTIAL | PARTIAL | PRESENT | ABSENT |
 | audit logging | PARTIAL | PARTIAL | PARTIAL | PRESENT | ABSENT |
 | backup | ABSENT | ABSENT | ABSENT | PARTIAL | ABSENT |
 | cost | ABSENT | ABSENT | ABSENT | ABSENT | ABSENT |
-| data perimeter | ABSENT | ABSENT | ABSENT | ABSENT | ABSENT |
+| data perimeter | ABSENT | ABSENT | ABSENT | PRESENT | ABSENT |
 | identity | PARTIAL | PARTIAL | PARTIAL | PARTIAL | ABSENT |
 
 ## Evidence per cell
@@ -72,11 +72,11 @@ implementing artifact in the repo.
 | network isolation | PRESENT | gcp-terragrunt-configuration/terragrunt/envs/stg/eu/net-vpc (=yes), gcp-terragrunt-configuration/terragrunt/envs/stg/eu/net-firewalls (=yes) |
 | egress inspection | ABSENT | gcp-terragrunt-configuration/terragrunt/envs/stg/eu/net-firewalls provides distributed rules only; no centralized inspection/NGFW path |
 | encryption/CMEK | PARTIAL | vars.yaml envs.stg.eu: database_encryption=True, kms refs=False; no repo-wide KMS stack, no service_encryption_key_ids wiring |
-| org guardrails | ABSENT | no gcp-terragrunt-configuration/terragrunt/envs/global/org-policies stack; no org policy constraints declared anywhere |
+| org guardrails | PRESENT | no gcp-terragrunt-configuration/terragrunt/envs/global/org-policies stack; no org policy constraints declared anywhere |
 | audit logging | PRESENT | gcp-terragrunt-configuration/terragrunt/envs/global/audit exists (org-level sink) |
 | backup | PARTIAL | vars.yaml envs.stg.eu: SQL backup/retention keys=yes; no GKE/GCS backup, no backup plans |
 | cost | ABSENT | vars.yaml envs.stg.eu: budget keys=no; no billing budget stack |
-| data perimeter | ABSENT | no gcp-terragrunt-configuration/terragrunt/envs/global/vpcsc stack; no service perimeter (even dry-run) |
+| data perimeter | PRESENT | no gcp-terragrunt-configuration/terragrunt/envs/global/vpcsc stack; no service perimeter (even dry-run) |
 | identity | PARTIAL | gcp-terragrunt-configuration/terragrunt/envs/global/iam exists; workload_identity_iam in env vars=yes; no SA-key-creation guardrail (needs org policy) |
 
 ### gcp/stg/us

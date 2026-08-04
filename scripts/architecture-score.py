@@ -158,6 +158,37 @@ def check_segmentation(aws, gcp):
              "spokes egress via local NAT/IGW (G3.A closes this)",
         "aws-terragrunt-configuration/aws/network/", ["PCI-DSS 1.2.1", "CIS 3.8"]))
 
+    # G4-8: the VPC-SC perimeter must cover every declared stg project and
+    # derive restricted services from declared APIs (never hand-maintained)
+    vpcsc_stack = (loaders.GCP_ENVS / "global" / "vpcsc" / "terragrunt.hcl")
+    global_res = (gcp.get("envs", {}).get("global", {}) or {}).get("resources", {}) or {}
+    vpcsc_vars = ((global_res.get("vpcsc") or {}).get("inputs", {}) or {})
+    stg_res = gcp_resources(gcp, "stg", "eu")
+    declared_projects = (1 if ((stg_res.get("net-vpc") or {}).get("inputs", {}) or {})
+                         .get("host_project_name") else 0) + \
+        len((((stg_res.get("svc-projects") or {}).get("inputs", {}) or {})
+             .get("service_projects") or {}))
+    perimeter_slots = len(vpcsc_vars.get("perimeter_project_numbers") or [])
+    apis_declared = bool(((stg_res.get("net-vpc") or {}).get("inputs", {}) or {})
+                         .get("active_apis"))
+    if not vpcsc_stack.exists():
+        vp_status, vp_expl = "FAIL", "No envs/global/vpcsc stack"
+    elif perimeter_slots < declared_projects:
+        vp_status = "FAIL"
+        vp_expl = (f"Perimeter declares {perimeter_slots} project slots but stg "
+                   f"declares {declared_projects} projects — a stg project is "
+                   "outside the perimeter")
+    elif not apis_declared:
+        vp_status, vp_expl = "FAIL", "No declared APIs to derive restricted services from"
+    else:
+        vp_status = "PASS"
+        vp_expl = (f"Perimeter covers all {declared_projects} declared stg projects; "
+                   "restricted services derived from declared APIs in the stack hcl")
+    recs.append(rp.record(
+        "Segmentation", "vpcsc-perimeter-coverage", vp_status, 6, vp_expl,
+        "gcp-terragrunt-configuration/terragrunt/envs/global/vpcsc/",
+        ["PCI-DSS 1.3", "SOC2 CC6.6", "HIPAA 164.312(e)(1)"]))
+
     tagged = "DataClassification" in json.dumps(aws.get("common", {})) or \
              "data-classification" in json.dumps(gcp.get("common", {}))
     recs.append(rp.record(
@@ -195,6 +226,13 @@ def check_encryption(aws, gcp):
         "aws vars.yaml Environments.*.Resources.{rds,aurora,dynamodb,redis,s3}",
         ["PCI-DSS 3.4", "CIS-2.1", "HIPAA 164.312(a)(2)(iv)"]))
 
+    def stack_wires_cmek(folder, env, resource):
+        hcl = loaders.GCP_ENVS / folder / env / resource / "terragrunt.hcl"
+        if not hcl.exists():
+            return False
+        text = hcl.read_text(encoding="utf-8", errors="replace")
+        return "encryption_key_name" in text or "service_encryption_key" in text
+
     gproblems = []
     for folder, env in [("stg", "eu"), ("dev", "eu")]:
         res = gcp_resources(gcp, folder, env)
@@ -202,10 +240,12 @@ def check_encryption(aws, gcp):
         if gke and not gke.get("database_encryption"):
             gproblems.append(f"{folder}/{env}: gke database_encryption off")
         sql = (res.get("svc-sql") or {}).get("inputs", {}) or {}
-        if sql and "kms" not in json.dumps(sql).lower():
+        if sql and "kms" not in json.dumps(sql).lower() \
+                and not stack_wires_cmek(folder, env, "svc-sql"):
             gproblems.append(f"{folder}/{env}: svc-sql has no CMEK key reference")
         redis = (res.get("svc-redis") or {}).get("inputs", {}) or {}
-        if redis and "kms" not in json.dumps(redis).lower():
+        if redis and "kms" not in json.dumps(redis).lower() \
+                and not stack_wires_cmek(folder, env, "svc-redis"):
             gproblems.append(f"{folder}/{env}: svc-redis has no CMEK key reference")
     stg_bad = [p for p in gproblems if p.startswith("stg/")]
     recs.append(rp.record(
@@ -214,6 +254,27 @@ def check_encryption(aws, gcp):
         f"Missing CMEK wiring: {gproblems[:6]}" if gproblems else
         "All GCP stg data services carry CMEK references",
         "gcp vars.yaml envs.*.*.resources.{svc-gke,svc-sql,svc-redis}",
+        ["PCI-DSS 3.4", "CIS GCP 1.10"]))
+
+    # G4-12: every stg data service resolves to a key that exists in the KMS
+    # stack config; a dangling reference = FAIL
+    dangling = []
+    kms_ok = []
+    for folder, env in [("stg", "eu")]:
+        res = gcp_resources(gcp, folder, env)
+        kms_keys = set((((res.get("kms") or {}).get("inputs", {}) or {})
+                        .get("keys", {}) or {}).keys())
+        for svc, keyname in (("svc-sql", "sql"), ("svc-redis", "redis")):
+            if svc in res and stack_wires_cmek(folder, env, svc):
+                (kms_ok if keyname in kms_keys else dangling).append(
+                    f"{folder}/{env}/{svc}->{keyname}")
+    recs.append(rp.record(
+        "Encryption", "gcp-kms-key-resolution",
+        "FAIL" if dangling else ("PASS" if kms_ok else "N/A"), 6,
+        (f"Dangling key references: {dangling}" if dangling else
+         f"Wired services resolve to declared KMS keys: {kms_ok}" if kms_ok else
+         "No CMEK-wired services yet"),
+        "gcp vars.yaml envs.stg.*.resources.kms.inputs.keys vs stack hcl wiring",
         ["PCI-DSS 3.4", "CIS GCP 1.10"]))
 
     rot = "rotation_period" in json.dumps(gcp) or "rotation" in json.dumps(

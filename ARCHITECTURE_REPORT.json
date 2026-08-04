@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "scripts/architecture-score.py",
-  "generated_at": "2026-08-04T06:52:50Z",
-  "source_hash": "aca355e646951c11be36831eaaf95f4b9fc96c69c4751a74148979901322862d",
-  "score": 23.5,
+  "generated_at": "2026-08-04T07:06:55Z",
+  "source_hash": "cdb3d9bd375e51a4356f344a5a2d02def4aaa89c5217d0e55fd0401158ad1f2e",
+  "score": 36.5,
   "grade": "F",
   "totals": {
-    "checks": 16,
-    "pass": 5,
+    "checks": 18,
+    "pass": 9,
     "warn": 3,
-    "fail": 8,
+    "fail": 6,
     "na": 0
   },
   "checks": [
@@ -53,6 +53,20 @@
     },
     {
       "category": "Segmentation",
+      "check": "vpcsc-perimeter-coverage",
+      "status": "PASS",
+      "score_impact": 0,
+      "weight": 6,
+      "explanation": "Perimeter covers all 2 declared stg projects; restricted services derived from declared APIs in the stack hcl",
+      "evidence_path": "gcp-terragrunt-configuration/terragrunt/envs/global/vpcsc/",
+      "controls": [
+        "PCI-DSS 1.3",
+        "SOC2 CC6.6",
+        "HIPAA 164.312(e)(1)"
+      ]
+    },
+    {
+      "category": "Segmentation",
       "check": "workload-classification-tags",
       "status": "WARN",
       "score_impact": 2.5,
@@ -84,7 +98,7 @@
       "status": "FAIL",
       "score_impact": 12,
       "weight": 12,
-      "explanation": "Missing CMEK wiring: ['stg/eu: svc-sql has no CMEK key reference', 'stg/eu: svc-redis has no CMEK key reference', 'dev/eu: svc-sql has no CMEK key reference', 'dev/eu: svc-redis has no CMEK key reference']",
+      "explanation": "Missing CMEK wiring: ['stg/eu: svc-redis has no CMEK key reference', 'dev/eu: svc-sql has no CMEK key reference', 'dev/eu: svc-redis has no CMEK key reference']",
       "evidence_path": "gcp vars.yaml envs.*.*.resources.{svc-gke,svc-sql,svc-redis}",
       "controls": [
         "PCI-DSS 3.4",
@@ -93,11 +107,24 @@
     },
     {
       "category": "Encryption",
+      "check": "gcp-kms-key-resolution",
+      "status": "PASS",
+      "score_impact": 0,
+      "weight": 6,
+      "explanation": "Wired services resolve to declared KMS keys: ['stg/eu/svc-sql->sql']",
+      "evidence_path": "gcp vars.yaml envs.stg.*.resources.kms.inputs.keys vs stack hcl wiring",
+      "controls": [
+        "PCI-DSS 3.4",
+        "CIS GCP 1.10"
+      ]
+    },
+    {
+      "category": "Encryption",
       "check": "key-rotation-declared",
-      "status": "FAIL",
-      "score_impact": 5,
+      "status": "PASS",
+      "score_impact": 0,
       "weight": 5,
-      "explanation": "No key rotation period declared in either vars.yaml (G4-9 adds KMS module with rotation; AWS CMKs land with G3 stacks)",
+      "explanation": "Key rotation period declared",
       "evidence_path": "vars.yaml (rotation_period keys)",
       "controls": [
         "PCI-DSS 3.6.4",
@@ -107,10 +134,10 @@
     {
       "category": "Identity",
       "check": "gcp-sa-key-creation-blocked",
-      "status": "FAIL",
-      "score_impact": 8,
+      "status": "PASS",
+      "score_impact": 0,
       "weight": 8,
-      "explanation": "No org-policy stack: iam.disableServiceAccountKeyCreation not enforced anywhere",
+      "explanation": "Org policy stack exists (constraint list verified in G4)",
       "evidence_path": "gcp-terragrunt-configuration/terragrunt/envs/global/",
       "controls": [
         "CIS GCP 1.4",

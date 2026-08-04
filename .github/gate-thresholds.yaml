@@ -22,3 +22,9 @@ allowed_placeholder_tokens:
   - PLACEHOLDER_OU_ID_STG            # org admin: aws organizations list-organizational-units-for-parent
   - PLACEHOLDER_CIDR_INSPECTION_US   # network team / IPAM (G3-1)
   - PLACEHOLDER_CIDR_INSPECTION_EU   # network team / IPAM (G3-1)
+  - PLACEHOLDER_GCP_DIRECTORY_CUSTOMER_ID   # gcloud organizations describe (G4-2)
+  - PLACEHOLDER_PROJECT_NUMBER_STG_HOST     # post-apply: gcloud projects describe (G4-6)
+  - PLACEHOLDER_PROJECT_NUMBER_STG_SERVICE  # post-apply (G4-6)
+  - PLACEHOLDER_CORP_EGRESS_CIDR            # network team (G4-6 access level)
+  - PLACEHOLDER_ADMIN_GROUP_EMAIL           # IAM team (G4-6 access level)
+  - PLACEHOLDER_CI_SA_EMAIL                 # created with CI_IDENTITY.md WIF setup

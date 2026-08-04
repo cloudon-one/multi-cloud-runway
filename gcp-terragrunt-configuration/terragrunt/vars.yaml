@@ -11,6 +11,78 @@ envs:
   global:
     region: us-east1
     resources:
+      # G4-4: org tag taxonomy; stg folder bound via inheritance in the stack.
+      tags:
+        inputs:
+          tags:
+            environment:
+              description: "Deployment environment"
+              values: ["dev", "stg", "prod", "shared"]
+            data-classification:
+              description: "Data sensitivity of the workload"
+              values: ["public", "internal", "confidential", "regulated"]
+            compliance-scope:
+              description: "Compliance regime the resource is in scope for"
+              values: ["none", "pci-dss", "hipaa", "soc2"]
+      # G4-6: VPC Service Controls, stg perimeter — DRY-RUN ONLY.
+      # restricted services derived in the stack hcl from declared APIs.
+      # Placeholders (GR-4): project numbers exist only post-apply; corp
+      # CIDR / identities come from the network + IAM teams.
+      vpcsc:
+        inputs:
+          policy_title: "cloudon-one-access-policy"
+          perimeter_name: "stg_perimeter"
+          perimeter_title: "stg data perimeter (dry-run)"
+          perimeter_project_numbers:
+            - "PLACEHOLDER_PROJECT_NUMBER_STG_HOST"
+            - "PLACEHOLDER_PROJECT_NUMBER_STG_SERVICE"
+          access_levels:
+            corp-network:
+              ip_subnetworks: ["PLACEHOLDER_CORP_EGRESS_CIDR"]
+            admin-identity:
+              members: ["group:PLACEHOLDER_ADMIN_GROUP_EMAIL"]
+            ci-automation:
+              members: ["serviceAccount:PLACEHOLDER_CI_SA_EMAIL"]
+          ingress_policies:
+            # admin console access from corp network
+            - from_access_levels: ["corp-network"]
+              to_services: ["*"]
+            # CI automation (plan-only OIDC identity)
+            - from_identities: ["serviceAccount:PLACEHOLDER_CI_SA_EMAIL"]
+              to_services: ["*"]
+            # GKE control plane
+            - from_access_levels: ["admin-identity"]
+              to_services: ["container.googleapis.com"]
+          egress_policies:
+            # artifact registry pulls
+            - identities: ["serviceAccount:PLACEHOLDER_CI_SA_EMAIL"]
+              to_services: ["artifactregistry.googleapis.com"]
+            # logging export
+            - identities: []
+              to_services: ["logging.googleapis.com"]
+      # G4-2: org policy library — enforcing at stg folder, dry-run at org
+      # (G4-3). Scope table: docs/preprod/ORG_POLICY_SCOPE.md.
+      # Controls: CIS GCP 1.4/4.x/6.x, PCI-DSS 7.x, SOC2 CC6.1.
+      org-policies:
+        inputs:
+          policies:
+            compute.requireOsLogin: {type: boolean}
+            compute.requireShieldedVm: {type: boolean}
+            compute.disableSerialPortAccess: {type: boolean}
+            compute.disableNestedVirtualization: {type: boolean}
+            compute.vmExternalIpAccess: {type: list, deny_all: true}
+            compute.skipDefaultNetworkCreation: {type: boolean}
+            iam.disableServiceAccountKeyCreation: {type: boolean}
+            iam.disableServiceAccountKeyUpload: {type: boolean}
+            iam.allowedPolicyMemberDomains:
+              type: list
+              allowed_values: ["PLACEHOLDER_GCP_DIRECTORY_CUSTOMER_ID"]
+            sql.restrictPublicIp: {type: boolean}
+            storage.publicAccessPrevention: {type: boolean}
+            storage.uniformBucketLevelAccess: {type: boolean}
+            gcp.resourceLocations:
+              type: list
+              allowed_values: ["in:europe-locations", "in:us-locations"]
       admin:
         inputs:
           billing_account: *billing_account
@@ -952,6 +1024,26 @@ envs:
     eu:
       region: &eu-stg-region "europe-west1"
       resources:
+        # G4-10: CMEK keyrings/keys for stg data services (90-day rotation).
+        # Wire outputs into service configs as encryption keys; post-apply
+        # service-agent grants come from `make cmek-wiring` (G4-11).
+        kms:
+          inputs:
+            keyring_prefix: "cloudon-stg-eu"
+            regions: ["europe-west1"]
+            keys:
+              gke:
+                rotation_period: "7776000s"
+              sql:
+                rotation_period: "7776000s"
+              storage:
+                rotation_period: "7776000s"
+              redis:
+                rotation_period: "7776000s"
+              logging:
+                rotation_period: "7776000s"
+              pubsub:
+                rotation_period: "7776000s"
         net-vpc:
           inputs:
             billing_account: *billing_account
