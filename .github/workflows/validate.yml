@@ -108,7 +108,7 @@ jobs:
             https://github.com/cloudon-one/aws-terraform-modules.git /tmp/aws-modules
 
       - name: Run Checkov (GCP modules)
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.3114.0
         with:
           directory: gcp-terragrunt-configuration/tf-modules
           framework: terraform
@@ -119,7 +119,7 @@ jobs:
           soft_fail: true
 
       - name: Run Checkov (AWS modules)
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.3114.0
         with:
           directory: /tmp/aws-modules
           framework: terraform
@@ -130,7 +130,7 @@ jobs:
           soft_fail: true
 
       - name: Run Checkov (AWS Terragrunt configs)
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.3114.0
         with:
           directory: aws-terragrunt-configuration
           framework: terraform
@@ -140,7 +140,7 @@ jobs:
           soft_fail: true
 
       - name: Run Checkov (GCP Terragrunt configs)
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.3114.0
         with:
           directory: gcp-terragrunt-configuration/terragrunt
           framework: terraform
