@@ -83,8 +83,20 @@ column; GCP org-policy guardrails are ABSENT entirely.
 ## 8. tflint sweep
 
 `make lint` recurses every `*.tf` directory — including `.terragrunt-cache`
-copies, so runtime and findings are inflated by cached module clones. The
-sweep was still running when this baseline was recorded; its archived output
-lands in `evidence/G0/lint.log` (local-only). Any material findings will be
-appended here before G0 closes.
-**Fix lands in:** G2 (lint scoped to source dirs, cache excluded).
+copies, so runtime and findings are inflated by cached module clones (the
+baseline sweep took ~5 minutes). The archived tail (`evidence/G0/lint.log`,
+local-only) shows only fixable `terraform_unused_declarations` warnings
+(e.g. unused `environment`, `routes`, `credentials_path` variables in
+`terraform-google-vpn`) and no errors in the captured output. Caveat: the
+Makefile loop `(cd "$dir" && tflint);` discards per-directory exit codes, so
+the target's exit 0 does **not** prove zero lint errors across the sweep.
+**Fix lands in:** G2 (lint scoped to source dirs, cache excluded, exit codes
+propagated).
+
+## 9. Upstream GCP module versions captured
+
+`scripts/check-module-versions.sh` ran clean; the full local-module →
+upstream-module version table is archived in
+`evidence/G0/module-versions.log` (local-only). Notables for later gates:
+`kubernetes-engine` 31.1.0, `project-factory` 15.0.1, `kms` 2.3.0 (used only
+inside `terraform-google-projects`), `sql-db` 21.0.0.
