@@ -42,25 +42,11 @@ make dev-plan            # Plan dev environment
 
 ## Architecture
 
-```mermaid
-graph LR
-    subgraph AWS["AWS Landing Zone"]
-        A1[VPC / TGW / VPN]
-        A2[EKS / EC2]
-        A3[RDS / Aurora / DynamoDB / Redis]
-        A4[CloudTrail / GuardDuty / SCP]
-    end
-
-    subgraph GCP["GCP Landing Zone"]
-        G1[Shared VPC / Cloud NAT / DNS]
-        G2[GKE / Workload Identity]
-        G3[Cloud SQL / Memorystore]
-        G4[Audit Logging / IAM / KMS]
-    end
-
-    TG[Terragrunt] --> AWS
-    TG --> GCP
-```
+The network topology and architecture diagram are **generated from
+`vars.yaml`** — see [NETWORK_TOPOLOGY.md](NETWORK_TOPOLOGY.md) (tables) and
+[architecture.mmd](architecture.mmd) (mermaid source). Regenerate with
+`make topology`; staleness is CI-checked (`scripts/validate-docs.py
+--check-staleness`). Do not hand-edit topology data here.
 
 ### AWS Landing Zone
 
@@ -209,14 +195,9 @@ cd gcp-terragrunt-configuration/terragrunt/envs/prod/us/svc-gke && terragrunt pl
 
 ### GCP
 
-| Environment | VPC CIDR | Region | GKE Pods | GKE Services |
-|-------------|----------|--------|----------|---------------|
-| Shared Dev | 10.151.0.0/16 | europe-west1 | 10.151.0.0/17 | 10.151.144.0/20 |
-| Shared Prod | 10.152.0.0/16 | us-east1 | 10.152.0.0/17 | 10.152.144.0/20 |
-| Dev EU | 10.153.0.0/16 | europe-west1 | 10.153.0.0/17 | 10.153.144.0/20 |
-| Staging EU | 10.154.0.0/16 | europe-west1 | 10.154.0.0/17 | 10.154.144.0/20 |
-| Prod EU | 10.155.0.0/16 | europe-west1 | 10.155.0.0/17 | 10.155.144.0/20 |
-| Prod US | 10.156.0.0/16 | us-east1 | 10.156.0.0/17 | 10.156.144.0/20 |
+CIDR allocations (VPCs, subnets, GKE secondary ranges) are generated from
+`vars.yaml` into [NETWORK_TOPOLOGY.md](NETWORK_TOPOLOGY.md) — the table
+formerly maintained here had drifted from the actual declared ranges.
 
 GCP uses **Shared VPC** (host/service project model), **VPC Peering** between shared and environment VPCs,
 **Cloud NAT** for outbound, and **Cloud DNS** for resolution.

@@ -1,0 +1,59 @@
+# Allowlist for input-assertion findings (G1-8).
+# Every entry REQUIRES a reason. Entries here still appear in
+# INPUT_ASSERTIONS.md (allowlisted section) — this file documents accepted
+# state, it does not hide it.
+# Controls: SOC2 CC8.1 (documented exceptions).
+
+allow:
+  - key: Environments.us-dev.Resources.tgw
+    reason: >-
+      Vestigial per-env TGW block; the global network/tgw stack reads
+      Environments.network only (its routes are hardcoded in its hcl).
+      Removing the block is a functional vars change deferred to the G3-4
+      TGW route-domain work, where TGW config becomes env-driven.
+
+  - key: envs.shrd.dev.resources.net-peering.inputs.billing_account
+    reason: >-
+      Injected by the shared YAML anchor merge used across resource blocks;
+      the peering module declares no such variable. Inert by construction.
+  - key: envs.shrd.dev.resources.net-peering.inputs.domain
+    reason: Same anchor-merge artifact as billing_account; inert by construction.
+  - key: envs.shrd.prod.resources.net-peering.inputs.billing_account
+    reason: Same anchor-merge artifact; prod tree is read-only in this plan (GR-3).
+  - key: envs.shrd.prod.resources.net-peering.inputs.domain
+    reason: Same anchor-merge artifact; prod tree is read-only in this plan (GR-3).
+
+  - key: envs.shrd.dev.resources.svc-iam-permissions
+    reason: &iam_perm >-
+      Pre-existing declared-but-undeployed IAM permission block recorded at
+      G1 baseline. Deploying the stack or deleting the block is a scope
+      decision for G4 (stg) / DEFERRED_PROD_CHANGES.md (prod, GR-3); the
+      evidence-spine gate makes no functional changes.
+  - key: envs.shrd.prod.resources.svc-iam-permissions
+    reason: *iam_perm
+  - key: envs.shrd.prod.resources.net-iam-permissions
+    reason: *iam_perm
+  - key: envs.dev.eu.resources.svc-iam-permissions
+    reason: *iam_perm
+  - key: envs.stg.eu.resources.svc-iam-permissions
+    reason: *iam_perm
+  - key: envs.stg.eu.resources.net-iam-permissions
+    reason: *iam_perm
+  - key: envs.prod.us.resources.svc-iam-permissions
+    reason: *iam_perm
+  - key: envs.prod.eu.resources.svc-iam-permissions
+    reason: *iam_perm
+
+  - key: envs.stg.eu.resources.net-glb
+    reason: >-
+      GLB declared for stg/eu but no stack exists (prod has one). Creating
+      the stg GLB stack is a G4 scope decision; recorded, not hidden.
+
+  - key: envs.prod.us.resources.svc-gke.inputs.enable_network_egress_expoert
+    reason: &egress_typo >-
+      Typo of enable_network_egress_export in PROD vars — the input is
+      silently ignored, so network egress export is effectively OFF in prod
+      GKE. Prod is read-only in this plan (GR-3); fix logged in
+      docs/preprod/DEFERRED_PROD_CHANGES.md.
+  - key: envs.prod.eu.resources.svc-gke.inputs.enable_network_egress_expoert
+    reason: *egress_typo

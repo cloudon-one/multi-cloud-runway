@@ -216,3 +216,26 @@ version: ## Show version information for all tools
 	@echo -n "Terragrunt: "; terragrunt --version
 	@echo -n "AWS CLI: "; aws --version | cut -d' ' -f1
 	@echo -n "GCloud: "; gcloud version | grep "Google Cloud SDK" | awk '{print $$4}'
+# ---------------------------------------------------------------------------
+# Pre-production readiness gates (G1+ evidence spine)
+# ---------------------------------------------------------------------------
+.PHONY: score score-strict placeholders placeholder-gate assertions topology
+
+score: ## Architecture scorecard + JSON report (ARCHITECTURE_REPORT.json / _SCORECARD.md)
+	@python3 scripts/architecture-score.py
+
+score-strict: ## Same as score, but fails below threshold / on FAIL checks
+	@python3 scripts/architecture-score.py --min-score 85 --fail-on FAIL
+
+placeholders: ## Regenerate PLACEHOLDERS.md (GR-4 register)
+	@python3 scripts/placeholder-scan.py
+
+placeholder-gate: ## Fail if any PLACEHOLDER_ token remains (pre-apply gate)
+	@python3 scripts/placeholder-scan.py --gate
+
+assertions: ## Intent -> output assertions (INPUT_ASSERTIONS.md)
+	@python3 scripts/input-assertions.py
+	@python3 scripts/input-assertions.py --check
+
+topology: ## Regenerate NETWORK_TOPOLOGY.md + architecture.mmd from vars.yaml
+	@python3 scripts/render-topology.py

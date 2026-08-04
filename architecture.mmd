@@ -1,0 +1,29 @@
+graph TB
+    subgraph AWS["AWS Landing Zone"]
+        TGW[Transit Gateway]
+        eu_prod["eu-prod-vpc<br/>10.35.0.0/16"]
+        TGW --- eu_prod
+        eu_stg["eu-stg-vpc<br/>10.34.0.0/16"]
+        TGW --- eu_stg
+        us_dev["us-dev-vpc<br/>10.32.0.0/16"]
+        TGW --- us_dev
+        us_prod["us-prod-vpc<br/>10.33.0.0/16"]
+        TGW --- us_prod
+        us_stg["us-stg-vpc<br/>10.31.0.0/16"]
+        TGW --- us_stg
+    end
+    subgraph GCP["GCP Landing Zone"]
+        g_shrd_dev["shrd/dev: cloudon-shrd-dev-vpc"]
+        g_shrd_prod["shrd/prod: cloudon-shrd-prod-vpc"]
+        g_dev_eu["dev/eu: cloudon-vpc-eu-dev"]
+        g_shrd_dev -.peering.- g_dev_eu
+        g_stg_eu["stg/eu: cloudon-vpc-eu-stg"]
+        g_shrd_prod -.peering.- g_stg_eu
+        g_us__["us/-: cloudon-vpc-eu-stg"]
+        g_shrd_dev -.peering.- g_us__
+        g_prod_us["prod/us: cloudon-prod-us-vpc"]
+        g_shrd_prod -.peering.- g_prod_us
+        g_prod_eu["prod/eu: cloudon-prod-eu-vpc"]
+        g_shrd_prod -.peering.- g_prod_eu
+    end
+    %% generated-from: sha256:68af9286daf05643a99a273d4879026112394221f5e01299d24740d161c9e910
