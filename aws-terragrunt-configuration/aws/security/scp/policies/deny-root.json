@@ -1,0 +1,16 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DenyRootPrincipalCIS11PCI81SOC2CC61",
+            "Effect": "Deny",
+            "Action": "*",
+            "Resource": "*",
+            "Condition": {
+                "ArnLike": {
+                    "aws:PrincipalARN": "arn:aws:iam::*:root"
+                }
+            }
+        }
+    ]
+}

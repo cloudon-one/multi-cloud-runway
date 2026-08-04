@@ -1,0 +1,217 @@
+# G2-1: Pre-production gates — turns the G1 evidence spine into enforcement.
+# All thresholds live in .github/gate-thresholds.yaml (G2-3).
+# Every action is pinned to a commit SHA (G2-4); dependabot tracks updates.
+# Minimal permissions per job; id-token only where OIDC is used (G2-5).
+# Plan artifacts retained 30 days and referenced by run id in evidence (G2-8).
+# Controls: SOC2 CC8.1, PCI-DSS 6.4.x (change control), CIS 1.x (review gates).
+#
+# ACTIVATION STATE (G2-9): see evidence/G2/GATE_ACTIVATION.md. Jobs marked
+# continue-on-error below are advisory either by plan design (input-assertions
+# until G5, policy-as-code until G3) or pending operator actions
+# (cloud-credential jobs need the OIDC roles from docs/preprod/CI_IDENTITY.md).
+
+name: Pre-Production Gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preprod-gates-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TG_VERSION: "1.1.2"
+
+jobs:
+  architecture-score:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Score against threshold (from gate-thresholds.yaml)
+        run: |
+          MIN=$(python3 -c "import yaml;print(yaml.safe_load(open('.github/gate-thresholds.yaml'))['min_architecture_score'])")
+          python3 scripts/architecture-score.py --min-score "$MIN"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: architecture-report
+          path: |
+            ARCHITECTURE_REPORT.json
+            ARCHITECTURE_SCORECARD.md
+          retention-days: 30
+
+  placeholder-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python3 scripts/placeholder-scan.py --gate
+
+  input-assertions:
+    # advisory until G5 flips it (plan G5-7)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python3 scripts/input-assertions.py --check
+
+  doc-freshness:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python3 scripts/validate-docs.py --check-staleness
+
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned scanners
+        run: |
+          pip install "checkov==3.3.0" pyyaml
+          curl -fsSL https://github.com/aquasecurity/tfsec/releases/download/v1.28.14/tfsec-linux-amd64 -o /usr/local/bin/tfsec
+          chmod +x /usr/local/bin/tfsec
+      - name: tfsec + checkov against thresholds
+        run: python3 scripts/security-gate.py
+
+  terragrunt-validate-stg:
+    # requires the read-only OIDC role from docs/preprod/CI_IDENTITY.md;
+    # advisory until the operator creates it (GATE_ACTIVATION.md tracks flip)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
+        with:
+          tofu_version: 1.12.5
+      - name: Install terragrunt (pinned)
+        run: |
+          curl -fsSL "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64" -o /usr/local/bin/terragrunt
+          chmod +x /usr/local/bin/terragrunt
+      - name: Configure AWS credentials (OIDC, read-only plan role)
+        if: vars.AWS_OIDC_PLAN_ROLE_ARN != ''
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ vars.AWS_OIDC_PLAN_ROLE_ARN }}
+          aws-region: us-east-2
+      - name: Configure GCP credentials (Workload Identity Federation)
+        if: vars.GCP_WIF_PROVIDER != ''
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+      - name: Validate stg trees (AWS us/eu + GCP stg)
+        run: make preprod-validate
+
+  terragrunt-plan-stg:
+    # same credential gating as validate; plan artifacts are the audit trail
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [terragrunt-validate-stg]
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
+        with:
+          tofu_version: 1.12.5
+      - name: Install terragrunt (pinned)
+        run: |
+          curl -fsSL "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64" -o /usr/local/bin/terragrunt
+          chmod +x /usr/local/bin/terragrunt
+      - name: Configure AWS credentials (OIDC, read-only plan role)
+        if: vars.AWS_OIDC_PLAN_ROLE_ARN != ''
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ vars.AWS_OIDC_PLAN_ROLE_ARN }}
+          aws-region: us-east-2
+      - name: Configure GCP credentials (Workload Identity Federation)
+        if: vars.GCP_WIF_PROVIDER != ''
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+      - name: Plan stg trees, JSON plan output
+        run: make preprod-plan
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: stg-plans-${{ github.run_id }}
+          path: plans/
+          retention-days: 30
+
+  policy-as-code:
+    # BLOCKING since G3-15: SCP fixture simulation runs offline (no cloud
+    # creds needed). Plan-JSON conftest checks join once plan artifacts flow
+    # (needs OIDC roles — CI_IDENTITY.md).
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Validate SCPs against fixture cases (G3-15)
+        run: python3 scripts/validate-scp.py
+
+  evidence-bundle:
+    if: always()
+    needs: [architecture-score, placeholder-gate, input-assertions, doc-freshness,
+            security-scan, terragrunt-validate-stg, terragrunt-plan-stg, policy-as-code]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Record job results for the gate evidence register
+        run: |
+          mkdir -p bundle
+          cat > bundle/RUN.md <<EOR
+          # Preprod gate run ${{ github.run_id }}
+          - commit: ${{ github.sha }}
+          - ref: ${{ github.ref }}
+          - results: score=${{ needs.architecture-score.result }} placeholders=${{ needs.placeholder-gate.result }} assertions=${{ needs.input-assertions.result }} docs=${{ needs.doc-freshness.result }} security=${{ needs.security-scan.result }} validate-stg=${{ needs.terragrunt-validate-stg.result }} plan-stg=${{ needs.terragrunt-plan-stg.result }} policy=${{ needs.policy-as-code.result }}
+          - plan artifact: stg-plans-${{ github.run_id }} (30d retention)
+          EOR
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: evidence-${{ github.run_id }}
+          path: bundle/
+          retention-days: 90

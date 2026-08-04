@@ -323,13 +323,65 @@ class DocumentationValidator:
         else:
             print(f"\n⚠️  Total issues found: {total_issues}")
             
+def check_staleness(root_dir: str = ".") -> bool:
+    """G1-10: fail if any generated doc is stale relative to its inputs.
+
+    Two mechanisms:
+      1. `<!-- generated-from: sha256:... -->` / `%% generated-from:` trailers
+         (NETWORK_TOPOLOGY.md, architecture.mmd, ARCHITECTURE_SCORECARD.md)
+         are compared against the current hash of both vars.yaml files.
+      2. Generators with their own --check mode are invoked
+         (coverage-matrix, placeholder-scan, render-topology).
+    """
+    import re as _re
+    import subprocess
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from lib import report as _rp, loaders as _ld
+
+    root = Path(root_dir)
+    ok = True
+    current = _rp.source_hash([_ld.AWS_VARS, _ld.GCP_VARS])
+    trailer_re = _re.compile(r"generated-from: sha256:([0-9a-f]{64})")
+    for name in ["NETWORK_TOPOLOGY.md", "architecture.mmd", "ARCHITECTURE_SCORECARD.md"]:
+        f = root / name
+        if not f.exists():
+            print(f"  ❌ {name}: missing (run its generator)")
+            ok = False
+            continue
+        m = trailer_re.search(f.read_text(encoding="utf-8"))
+        if not m:
+            print(f"  ❌ {name}: no generated-from trailer")
+            ok = False
+        elif m.group(1) != current:
+            print(f"  ❌ {name}: stale (sources changed since generation)")
+            ok = False
+        else:
+            print(f"  ✅ {name}: fresh")
+    for script, argsx in [("coverage-matrix.py", ["--check"]),
+                          ("placeholder-scan.py", ["--check"]),
+                          ("render-topology.py", ["--check"]),
+                          ("render-cmek-wiring.py", ["--check"])]:
+        r = subprocess.run([sys.executable, str(root / "scripts" / script), *argsx],
+                           capture_output=True, text=True)
+        print(f"  {'✅' if r.returncode == 0 else '❌'} scripts/{script} {' '.join(argsx)}")
+        if r.returncode != 0:
+            ok = False
+    return ok
+
+
 def main():
     parser = argparse.ArgumentParser(description="Validate documentation in multi-cloud infrastructure")
     parser.add_argument("--root-dir", default=".", help="Root directory to scan (default: current)")
     parser.add_argument("--fail-on-warnings", action="store_true", help="Fail on warnings as well as errors")
-    
+    parser.add_argument("--check-staleness", action="store_true",
+                        help="only verify generated docs are fresh relative to their inputs")
+
     args = parser.parse_args()
-    
+
+    if args.check_staleness:
+        print("📄 Checking generated-doc staleness...")
+        sys.exit(0 if check_staleness(args.root_dir) else 1)
+
     validator = DocumentationValidator(args.root_dir)
     success = validator.validate_all()
     

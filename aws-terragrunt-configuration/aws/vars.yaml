@@ -233,6 +233,38 @@ Environments:
               content: "policies/prod_infra.json"
               target_ids:
                 - "ou-XXXX-XXXXXXXX"
+            # --- G3-13 guardrail library. stg OU only in this gate (G3-16);
+            # prod attachment deferred (DEFERRED_PROD_CHANGES.md #3).
+            # Control mapping: security/scp/policies/CONTROLS.md (GR-6).
+            - name: "protect-security-services"
+              description: "Deny disabling CloudTrail/Config/GuardDuty/SecurityHub/AccessAnalyzer (PCI-DSS 10.1, CIS 3.x)"
+              content: "policies/protect-security-services.json"
+              target_ids:
+                - "PLACEHOLDER_OU_ID_STG"
+            - name: "require-imdsv2"
+              description: "Deny RunInstances without IMDSv2 and metadata downgrades (CIS 5.2.5)"
+              content: "policies/require-imdsv2.json"
+              target_ids:
+                - "PLACEHOLDER_OU_ID_STG"
+            - name: "region-restriction"
+              description: "Deny actions outside us-east-2/eu-west-2, global services exempt (PCI-DSS 12.1)"
+              content: "policies/region-restriction.json"
+              target_ids:
+                - "PLACEHOLDER_OU_ID_STG"
+            - name: "deny-root"
+              description: "Deny all actions by root principals (CIS 1.1)"
+              content: "policies/deny-root.json"
+              target_ids:
+                - "PLACEHOLDER_OU_ID_STG"
+            - name: "guardrails-sandbox"
+              description: "Non-prod instance-type/volume caps (SOC2 CC3.4)"
+              content: "policies/guardrails-sandbox.json"
+              target_ids:
+                - "PLACEHOLDER_OU_ID_STG"
+            - name: "quarantine"
+              description: "Deny-all quarantine; UNATTACHED by default, attach to a compromised account during incident response (SOC2 CC6.2)"
+              content: "policies/quarantine.json"
+              target_ids: []
 
 
   us-dev:
@@ -460,6 +492,25 @@ Environments:
 
   us-stg:
     Resources:
+      # G3-1: centralized egress inspection schema (PCI-DSS 1.2.1, CIS 3.8).
+      # No consuming stack yet: inspection-vpc / network-firewall / tgw-routing
+      # modules do not exist upstream (docs/preprod/MODULE_GAPS.md).
+      # CIDRs are network-team decisions (GR-4): resolve placeholders pre-apply.
+      inspection:
+        region: *DefReg
+        inputs:
+          enabled: false
+          vpc_cidr: "PLACEHOLDER_CIDR_INSPECTION_US"
+          az_count: 3
+          tgw_route_domains: ["inspection", "spokes", "regulated"]
+          firewall_policy:
+            rule_order: "STRICT_ORDER"
+            stateful_default_actions: ["aws:drop_established", "aws:alert_established"]
+          managed_rule_groups:
+            - "AbusedLegitMalwareDomainsStrictOrder"
+            - "BotNetCommandAndControlDomainsStrictOrder"
+            - "MalwareDomainsStrictOrder"
+          log_destination: "cloudwatch"
       vpc:
         region: *DefReg
         inputs:
@@ -678,6 +729,25 @@ Environments:
 
   eu-stg:
     Resources:
+      # G3-1: centralized egress inspection schema (PCI-DSS 1.2.1, CIS 3.8).
+      # No consuming stack yet: inspection-vpc / network-firewall / tgw-routing
+      # modules do not exist upstream (docs/preprod/MODULE_GAPS.md).
+      # CIDRs are network-team decisions (GR-4): resolve placeholders pre-apply.
+      inspection:
+        region: *EUReg
+        inputs:
+          enabled: false
+          vpc_cidr: "PLACEHOLDER_CIDR_INSPECTION_EU"
+          az_count: 3
+          tgw_route_domains: ["inspection", "spokes", "regulated"]
+          firewall_policy:
+            rule_order: "STRICT_ORDER"
+            stateful_default_actions: ["aws:drop_established", "aws:alert_established"]
+          managed_rule_groups:
+            - "AbusedLegitMalwareDomainsStrictOrder"
+            - "BotNetCommandAndControlDomainsStrictOrder"
+            - "MalwareDomainsStrictOrder"
+          log_destination: "cloudwatch"
       vpc:
         region: *EUReg
         inputs:

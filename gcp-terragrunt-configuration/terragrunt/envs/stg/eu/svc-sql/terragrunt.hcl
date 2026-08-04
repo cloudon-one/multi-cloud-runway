@@ -46,6 +46,19 @@ dependency "sql_project" {
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
+# G4-10/G4-12: CMEK for CloudSQL disk encryption (PCI-DSS 3.4, CIS GCP 1.10).
+# The sql service agent must be granted decrypt on this key post-apply —
+# commands in CMEK_WIRING.md (make cmek-wiring).
+dependency "kms" {
+  config_path = "../kms"
+  mock_outputs = {
+    key_ids = {
+      "europe-west1/sql" = "projects/mock/locations/europe-west1/keyRings/mock/cryptoKeys/sql"
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+}
+
 locals {
   common_vars   = yamldecode(file(find_in_parent_folders("vars.yaml")))
   environment   = basename(dirname(get_terragrunt_dir()))
@@ -57,8 +70,9 @@ locals {
 }
 
 inputs = merge(local.resource_vars["inputs"], {
-  project_id         = dependency.sql_project.outputs.projects["service"].project_id
-  region             = dependency.host_project.outputs.subnets["europe-west1/gke-subnet"].region
+  project_id          = dependency.sql_project.outputs.projects["service"].project_id
+  encryption_key_name = dependency.kms.outputs.key_ids["europe-west1/sql"]
+  region              = dependency.host_project.outputs.subnets["europe-west1/gke-subnet"].region
   vpc_network        = dependency.host_project.outputs.network_name
   network            = dependency.host_project.outputs.network_self_link
   network_project_id = dependency.host_project.outputs.project_id

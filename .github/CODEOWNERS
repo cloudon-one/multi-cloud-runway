@@ -1,0 +1,8 @@
+# G2-7: security-sensitive paths require security review.
+# Adjust the team handle to the real security team before enabling
+# required-reviewer branch protection (docs/preprod/BRANCH_PROTECTION.md).
+
+/aws-terragrunt-configuration/aws/security/   @cloudon-one/security
+/gcp-terragrunt-configuration/terragrunt/envs/global/   @cloudon-one/security
+/.github/   @cloudon-one/security
+/scripts/   @cloudon-one/security

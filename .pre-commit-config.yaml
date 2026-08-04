@@ -141,3 +141,26 @@ repos:
         language: system
         files: \.(md|hcl|yaml|yml)$
         pass_filenames: false
+  # Pre-production gate hooks (G2-6)
+  - repo: local
+    hooks:
+      - id: placeholder-scan
+        name: Placeholder register freshness
+        entry: sh -c 'python3 scripts/placeholder-scan.py --check'
+        language: system
+        files: \.(tf|hcl|yaml|yml|json)$
+        pass_filenames: false
+
+      - id: architecture-score-quick
+        name: Architecture score (quick)
+        entry: sh -c 'python3 scripts/architecture-score.py --quick'
+        language: system
+        files: \.(hcl|yaml|yml)$
+        pass_filenames: false
+
+      - id: render-topology-check
+        name: Generated topology freshness
+        entry: sh -c 'python3 scripts/render-topology.py --check'
+        language: system
+        files: (vars\.yaml|NETWORK_TOPOLOGY\.md|architecture\.mmd)$
+        pass_filenames: false
