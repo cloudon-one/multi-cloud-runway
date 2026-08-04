@@ -40,14 +40,6 @@ make dev-plan            # Plan dev environment
 
 ---
 
-## Architecture
-
-The network topology and architecture diagram are **generated from
-`vars.yaml`** — see [NETWORK_TOPOLOGY.md](NETWORK_TOPOLOGY.md) (tables) and
-[architecture.mmd](architecture.mmd) (mermaid source). Regenerate with
-`make topology`; staleness is CI-checked (`scripts/validate-docs.py
---check-staleness`). Do not hand-edit topology data here.
-
 ### AWS Landing Zone
 
 | Layer | Components |
