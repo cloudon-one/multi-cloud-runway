@@ -1,0 +1,123 @@
+# SCP fixture cases (G3-15) — consumed by scripts/validate-scp.py.
+# Every parseable policy in aws/security/scp/policies/ needs >= 3 cases.
+# context keys: action, resource (default "*"), plus raw IAM condition keys.
+# expect: deny = the SCP blocks the request; allow = it does not.
+# Controls: PCI-DSS 7.2, SOC2 CC6.1.
+
+policies:
+  protect-security-services.json:
+    cases:
+      - name: developer-cannot-stop-cloudtrail
+        context: {action: "cloudtrail:StopLogging", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: break-glass-can-stop-cloudtrail
+        context: {action: "cloudtrail:StopLogging", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/break-glass-ir"}
+        expect: allow
+      - name: developer-cannot-delete-guardduty-detector
+        context: {action: "guardduty:DeleteDetector", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: security-admin-can-manage-securityhub
+        context: {action: "securityhub:DisableSecurityHub", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/security-admin"}
+        expect: allow
+      - name: unrelated-action-unaffected
+        context: {action: "s3:GetObject", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+
+  require-imdsv2.json:
+    cases:
+      - name: launch-with-imdsv1-denied
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:instance/*", "ec2:MetadataHttpTokens": "optional"}
+        expect: deny
+      - name: launch-without-metadata-options-denied
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:instance/*"}
+        expect: deny
+      - name: launch-with-imdsv2-allowed
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:instance/*", "ec2:MetadataHttpTokens": "required"}
+        expect: allow
+      - name: metadata-downgrade-denied
+        context: {action: "ec2:ModifyInstanceMetadataOptions", "ec2:MetadataHttpTokens": "optional"}
+        expect: deny
+
+  region-restriction.json:
+    cases:
+      - name: workload-outside-regions-denied
+        context: {action: "dynamodb:PutItem", "aws:RequestedRegion": "ap-southeast-2", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: workload-in-us-east-2-allowed
+        context: {action: "dynamodb:PutItem", "aws:RequestedRegion": "us-east-2", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+      - name: global-service-exempt
+        context: {action: "iam:CreateRole", "aws:RequestedRegion": "us-east-1", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+      - name: break-glass-exempt-anywhere
+        context: {action: "ec2:DescribeInstances", "aws:RequestedRegion": "ap-southeast-2", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/break-glass-ir"}
+        expect: allow
+
+  deny-root.json:
+    cases:
+      - name: root-console-action-denied
+        context: {action: "ec2:TerminateInstances", "aws:PrincipalARN": "arn:aws:iam::111122223333:root"}
+        expect: deny
+      - name: root-read-denied-too
+        context: {action: "s3:GetObject", "aws:PrincipalARN": "arn:aws:iam::111122223333:root"}
+        expect: deny
+      - name: iam-role-unaffected
+        context: {action: "ec2:TerminateInstances", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/admin"}
+        expect: allow
+
+  guardrails-sandbox.json:
+    cases:
+      - name: oversized-instance-denied
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:instance/*", "ec2:InstanceType": "m5.24xlarge"}
+        expect: deny
+      - name: burstable-instance-allowed
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:instance/*", "ec2:InstanceType": "t3.large"}
+        expect: allow
+      - name: oversized-volume-denied
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:volume/*", "ec2:VolumeSize": "1000"}
+        expect: deny
+      - name: normal-volume-allowed
+        context: {action: "ec2:RunInstances", resource: "arn:aws:ec2:us-east-2:111122223333:volume/*", "ec2:VolumeSize": "100"}
+        expect: allow
+
+  quarantine.json:
+    cases:
+      - name: quarantined-role-denied-everything
+        context: {action: "s3:GetObject", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: break-glass-still-works
+        context: {action: "s3:GetObject", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/break-glass-ir"}
+        expect: allow
+      - name: service-linked-roles-still-work
+        context: {action: "elasticloadbalancing:DescribeLoadBalancers", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/aws-service-role/elasticloadbalancing.amazonaws.com"}
+        expect: allow
+
+  # --- pre-existing policies (unchanged content; cases document behavior) ---
+  global.json:
+    cases:
+      - name: developer-cannot-touch-controltower-stacksets
+        context: {action: "cloudformation:DeleteStack", resource: "arn:aws:cloudformation:us-east-2:111122223333:stackset/AWSControlTower:x", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: controltower-execution-role-exempt
+        context: {action: "cloudformation:DeleteStack", resource: "arn:aws:cloudformation:us-east-2:111122223333:stackset/AWSControlTower:x", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/AWSControlTowerExecution"}
+        expect: allow
+      - name: ordinary-stack-unaffected
+        context: {action: "cloudformation:DeleteStack", resource: "arn:aws:cloudformation:us-east-2:111122223333:stack/app-stack/x", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+
+  prod.json:
+    cases:
+      # NOTE: this policy is a NotAction deny — the 40 listed service prefixes
+      # (acm, access-analyzer, ...) are EXEMPT from the region restriction.
+      - name: prod-workload-outside-region-list-denied
+        context: {action: "ec2:RunInstances", "aws:RequestedRegion": "ap-southeast-1", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: deny
+      - name: prod-workload-in-us-east-2-allowed
+        context: {action: "ec2:RunInstances", "aws:RequestedRegion": "us-east-2", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+      - name: exempt-service-allowed-anywhere
+        context: {action: "acm:RequestCertificate", "aws:RequestedRegion": "ap-southeast-1", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/developer"}
+        expect: allow
+      - name: controltower-exempt-outside-regions
+        context: {action: "ec2:RunInstances", "aws:RequestedRegion": "ap-southeast-1", "aws:PrincipalARN": "arn:aws:iam::111122223333:role/AWSControlTowerExecution"}
+        expect: allow

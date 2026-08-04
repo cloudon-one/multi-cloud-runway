@@ -1,0 +1,20 @@
+# Waivers for validate-scp.py (G3-15). Every entry REQUIRES a reason.
+# A waiver downgrades an otherwise-failing policy file to WARN — it documents
+# accepted broken state, it does not hide it.
+
+waivers:
+  - file: dev.json
+    reason: >-
+      Pre-existing 0-byte file found at G3 baseline. It is attached to the dev
+      OU in vars.yaml ("dev-workloads-protection") and would fail at apply.
+      Authoring real content is a policy-design decision for the platform
+      team; tracked in evidence/G3 findings.
+  - file: dev_infra.json
+    reason: >-
+      Pre-existing 0-byte file ("dev-infra-protection" attachment). Same
+      handling as dev.json.
+  - file: prod_infra.json
+    reason: >-
+      Pre-existing 0-byte file attached to the PROD infra OU. Prod tree is
+      read-only for this plan (GR-3) — fix recorded in
+      docs/preprod/DEFERRED_PROD_CHANGES.md #4.

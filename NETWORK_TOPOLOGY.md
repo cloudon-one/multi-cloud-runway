@@ -56,5 +56,5 @@ Transit Gateway: `aws/network/tgw` (routes currently hardcoded in hcl).
 | prod/eu | gke-subnet | pods | `10.155.0.0/17` |
 | prod/eu | gke-subnet | services | `10.155.144.0/20` |
 
-<!-- generated-from: sha256:68af9286daf05643a99a273d4879026112394221f5e01299d24740d161c9e910 -->
+<!-- generated-from: sha256:aca355e646951c11be36831eaaf95f4b9fc96c69c4751a74148979901322862d -->
 

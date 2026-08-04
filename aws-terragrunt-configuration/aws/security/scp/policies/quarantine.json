@@ -1,0 +1,20 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "QuarantineDenyAllSOC2CC62PCI121",
+            "Effect": "Deny",
+            "Action": "*",
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin",
+                        "arn:aws:iam::*:role/aws-service-role/*"
+                    ]
+                }
+            }
+        }
+    ]
+}

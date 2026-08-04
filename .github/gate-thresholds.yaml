@@ -17,5 +17,8 @@ max_tfsec_critical: 0
 max_checkov_failed: 44
 
 # placeholder gate (GR-4): tokens listed here are tolerated pre-apply.
-# Must be empty for stg promotion (G7).
-allowed_placeholder_tokens: []
+# Must be empty for stg promotion (G7). Each entry names its resolver.
+allowed_placeholder_tokens:
+  - PLACEHOLDER_OU_ID_STG            # org admin: aws organizations list-organizational-units-for-parent
+  - PLACEHOLDER_CIDR_INSPECTION_US   # network team / IPAM (G3-1)
+  - PLACEHOLDER_CIDR_INSPECTION_EU   # network team / IPAM (G3-1)

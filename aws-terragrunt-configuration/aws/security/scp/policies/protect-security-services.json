@@ -1,0 +1,101 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DenyDisableCloudTrailPCI101CIS31",
+            "Effect": "Deny",
+            "Action": [
+                "cloudtrail:StopLogging",
+                "cloudtrail:DeleteTrail",
+                "cloudtrail:UpdateTrail",
+                "cloudtrail:PutEventSelectors"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "DenyDisableConfigPCI111CIS35",
+            "Effect": "Deny",
+            "Action": [
+                "config:DeleteConfigurationRecorder",
+                "config:DeleteDeliveryChannel",
+                "config:StopConfigurationRecorder",
+                "config:DeleteConfigRule",
+                "config:DeleteConformancePack"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "DenyDisableGuardDutyPCI115CIS314",
+            "Effect": "Deny",
+            "Action": [
+                "guardduty:DeleteDetector",
+                "guardduty:DisassociateFromMasterAccount",
+                "guardduty:DisassociateFromAdministratorAccount",
+                "guardduty:StopMonitoringMembers",
+                "guardduty:DeleteMembers",
+                "guardduty:UpdateDetector"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "DenyDisableSecurityHubSOC2CC71",
+            "Effect": "Deny",
+            "Action": [
+                "securityhub:DisableSecurityHub",
+                "securityhub:BatchDisableStandards",
+                "securityhub:DeleteMembers",
+                "securityhub:DisassociateFromMasterAccount",
+                "securityhub:DisassociateFromAdministratorAccount"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "DenyDeleteAccessAnalyzerSOC2CC61",
+            "Effect": "Deny",
+            "Action": [
+                "access-analyzer:DeleteAnalyzer"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*",
+                        "arn:aws:iam::*:role/security-admin"
+                    ]
+                }
+            }
+        }
+    ]
+}

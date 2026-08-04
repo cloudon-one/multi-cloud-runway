@@ -280,4 +280,6 @@ preprod-gates-local: ## Local equivalent of .github/workflows/preprod-gates.yml 
 	@python3 scripts/validate-docs.py --check-staleness
 	@echo "== security-scan (thresholds)"
 	@python3 scripts/security-gate.py
+	@echo "== policy-as-code (SCP fixture simulation, G3-15)"
+	@python3 scripts/validate-scp.py
 	@echo "✅ local gates pass"

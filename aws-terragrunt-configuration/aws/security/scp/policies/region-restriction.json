@@ -1,0 +1,38 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DenyOutsideAllowedRegionsPCI121CIS17",
+            "Effect": "Deny",
+            "NotAction": [
+                "iam:*",
+                "organizations:*",
+                "route53:*",
+                "route53domains:*",
+                "cloudfront:*",
+                "budgets:*",
+                "ce:*",
+                "cur:*",
+                "support:*",
+                "health:*",
+                "account:*",
+                "aws-marketplace:*",
+                "sts:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringNotEquals": {
+                    "aws:RequestedRegion": [
+                        "us-east-2",
+                        "eu-west-2"
+                    ]
+                },
+                "ArnNotLike": {
+                    "aws:PrincipalARN": [
+                        "arn:aws:iam::*:role/break-glass-*"
+                    ]
+                }
+            }
+        }
+    ]
+}

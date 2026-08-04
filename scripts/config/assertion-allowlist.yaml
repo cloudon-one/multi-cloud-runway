@@ -57,3 +57,13 @@ allow:
       docs/preprod/DEFERRED_PROD_CHANGES.md.
   - key: envs.prod.eu.resources.svc-gke.inputs.enable_network_egress_expoert
     reason: *egress_typo
+
+  # --- G3 additions ---
+  - key: Environments.us-stg.Resources.inspection
+    reason: &inspection >-
+      G3-1 egress-inspection schema, declared ahead of its consuming stacks:
+      the inspection-vpc / network-firewall / tgw-routing modules do not exist
+      upstream yet (docs/preprod/MODULE_GAPS.md #1-#4). enabled: false until
+      modules land and placeholders resolve.
+  - key: Environments.eu-stg.Resources.inspection
+    reason: *inspection
