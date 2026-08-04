@@ -1,0 +1,21 @@
+# Gate thresholds (G2-3) — ALL gate numbers live here, not in workflow YAML.
+# Ratchet policy: thresholds start at the measured local baseline (2026-08-04,
+# evidence/G2/security-baseline.log) and only tighten. Loosening a value
+# requires a PR touching this file + security review (CODEOWNERS).
+# Controls: SOC2 CC8.1, PCI-DSS 6.4 (change control).
+
+# architecture-score gate: baseline is 23.5 (evidence/G1). Warn-level start
+# per GR-7; target >= 85 by G5 (make score-strict enforces the target form).
+min_architecture_score: 20
+
+# security scanners — measured baseline 2026-08-04 on a pristine index export
+# (scripts/security-gate.py): tfsec HIGH=4 (all in upstream GKE/SQL modules
+# as resolved with our inputs), checkov failed=44 (incl. CKV_TF_1 unpinned
+# module sources in tf-modules). Ratchet DOWN as gates fix findings.
+max_tfsec_high: 4
+max_tfsec_critical: 0
+max_checkov_failed: 44
+
+# placeholder gate (GR-4): tokens listed here are tolerated pre-apply.
+# Must be empty for stg promotion (G7).
+allowed_placeholder_tokens: []

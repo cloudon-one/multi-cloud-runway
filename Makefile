@@ -20,46 +20,46 @@ verify-setup: ## Verify all required tools are installed
 # AWS targets
 aws-init: ## Initialize AWS Terragrunt configurations
 	@echo "Initializing AWS configurations..."
-	@cd aws-terragrunt-configuration/aws && terragrunt run-all init --terragrunt-non-interactive
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive -- init
 
 aws-validate: ## Validate AWS Terragrunt configurations
 	@echo "Validating AWS configurations..."
-	@cd aws-terragrunt-configuration/aws && terragrunt run-all validate --terragrunt-non-interactive
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive -- validate
 
 aws-plan: ## Generate AWS infrastructure plan
 	@echo "Planning AWS infrastructure..."
-	@cd aws-terragrunt-configuration/aws && terragrunt run-all plan --terragrunt-non-interactive
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive -- plan
 
 aws-apply: ## Apply AWS infrastructure changes
 	@echo "Applying AWS infrastructure..."
-	@cd aws-terragrunt-configuration/aws && terragrunt run-all apply --terragrunt-non-interactive
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive -- apply
 
 aws-destroy: ## Destroy AWS infrastructure
 	@echo "⚠️  Destroying AWS infrastructure..."
 	@read -p "Are you sure? Type 'yes' to continue: " confirm && [ "$$confirm" = "yes" ]
-	@cd aws-terragrunt-configuration/aws && terragrunt run-all destroy --terragrunt-non-interactive
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive -- destroy
 
 # GCP targets
 gcp-init: ## Initialize GCP Terragrunt configurations
 	@echo "Initializing GCP configurations..."
-	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all init --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive -- init
 
 gcp-validate: ## Validate GCP Terragrunt configurations
 	@echo "Validating GCP configurations..."
-	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all validate --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive -- validate
 
 gcp-plan: ## Generate GCP infrastructure plan
 	@echo "Planning GCP infrastructure..."
-	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all plan --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive -- plan
 
 gcp-apply: ## Apply GCP infrastructure changes
 	@echo "Applying GCP infrastructure..."
-	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all apply --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive -- apply
 
 gcp-destroy: ## Destroy GCP infrastructure
 	@echo "⚠️  Destroying GCP infrastructure..."
 	@read -p "Are you sure? Type 'yes' to continue: " confirm && [ "$$confirm" = "yes" ]
-	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run-all destroy --terragrunt-non-interactive
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive -- destroy
 
 # Combined targets
 init: aws-init gcp-init ## Initialize all cloud configurations
@@ -239,3 +239,45 @@ assertions: ## Intent -> output assertions (INPUT_ASSERTIONS.md)
 
 topology: ## Regenerate NETWORK_TOPOLOGY.md + architecture.mmd from vars.yaml
 	@python3 scripts/render-topology.py
+
+# ---------------------------------------------------------------------------
+# Pre-production gates: stg-scoped terragrunt + local CI-equivalent (G2)
+# ---------------------------------------------------------------------------
+.PHONY: preprod-validate preprod-plan preprod-gates-local
+
+preprod-validate: ## run --all validate across stg trees only (both clouds)
+	@echo "Validating AWS stg (us + eu)..."
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive \
+		--queue-include-dir "*/us/stg" --queue-include-dir "*/eu/stg" -- validate
+	@echo "Validating GCP stg..."
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive \
+		--queue-include-dir "stg/*/*" -- validate
+
+preprod-plan: ## run --all plan across stg trees only; JSON plans to plans/
+	@mkdir -p plans
+	@echo "Planning AWS stg (us + eu)..."
+	@cd aws-terragrunt-configuration/aws && terragrunt run --all --non-interactive \
+		--queue-include-dir "*/us/stg" --queue-include-dir "*/eu/stg" -- plan -out=tfplan.binary
+	@echo "Planning GCP stg..."
+	@cd gcp-terragrunt-configuration/terragrunt/envs && terragrunt run --all --non-interactive \
+		--queue-include-dir "stg/*/*" -- plan -out=tfplan.binary
+	@echo "Collecting JSON plans..."
+	@find aws-terragrunt-configuration gcp-terragrunt-configuration -name tfplan.binary | while read f; do \
+		d=$$(dirname $$f); n=$$(echo $$d | tr '/' '_'); \
+		(cd $$d && terragrunt show -json tfplan.binary > $(CURDIR)/plans/$$n.json) || exit 1; \
+	done
+	@echo "✅ Plans in plans/"
+
+preprod-gates-local: ## Local equivalent of .github/workflows/preprod-gates.yml (CI billing-locked)
+	@echo "== architecture-score (threshold from .github/gate-thresholds.yaml)"
+	@MIN=$$(python3 -c "import yaml;print(yaml.safe_load(open('.github/gate-thresholds.yaml'))['min_architecture_score'])"); \
+		python3 scripts/architecture-score.py --min-score $$MIN
+	@echo "== placeholder-gate"
+	@python3 scripts/placeholder-scan.py --gate
+	@echo "== input-assertions (advisory until G5)"
+	@python3 scripts/input-assertions.py --check || echo "  (advisory: non-blocking until G5)"
+	@echo "== doc-freshness"
+	@python3 scripts/validate-docs.py --check-staleness
+	@echo "== security-scan (thresholds)"
+	@python3 scripts/security-gate.py
+	@echo "✅ local gates pass"
