@@ -43,7 +43,7 @@ jobs:
         run: |
           MIN=$(python3 -c "import yaml;print(yaml.safe_load(open('.github/gate-thresholds.yaml'))['min_architecture_score'])")
           python3 scripts/architecture-score.py --min-score "$MIN"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: architecture-report
           path: |
@@ -169,7 +169,7 @@ jobs:
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
       - name: Plan stg trees, JSON plan output
         run: make preprod-plan
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: stg-plans-${{ github.run_id }}
           path: plans/
@@ -210,7 +210,7 @@ jobs:
           - results: score=${{ needs.architecture-score.result }} placeholders=${{ needs.placeholder-gate.result }} assertions=${{ needs.input-assertions.result }} docs=${{ needs.doc-freshness.result }} security=${{ needs.security-scan.result }} validate-stg=${{ needs.terragrunt-validate-stg.result }} plan-stg=${{ needs.terragrunt-plan-stg.result }} policy=${{ needs.policy-as-code.result }}
           - plan artifact: stg-plans-${{ github.run_id }} (30d retention)
           EOR
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: evidence-${{ github.run_id }}
           path: bundle/
